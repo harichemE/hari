@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alan Turing Morphogenesis — Hariharan Ravi Kavitha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #ffffff;
+      --bg-off:    #f9f8f6;
+      --ink:       #111010;
+      --ink-mid:   #383430;
+      --ink-muted: #6a6258;
+      --orange:    #d95f0a;
+      --orange-dk: #b54d06;
+      --orange-lt: #fde8d4;
+      --line:      #e0d8ce;
+      --line-dark: #c8bfb2;
+      --blue:      #1e84fa;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Instrument Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 5rem;
+      background: transparent;
+      transition: background 0.3s, border-color 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,0.88);
+      border-bottom-color: var(--line);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-back {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--orange); }
+
+    /* HERO */
+    #article-hero {
+      padding: 10rem 5rem 5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .article-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 2rem;
+    }
+    .article-tag::before {
+      content: '';
+      display: block;
+      width: 1.8rem;
+      height: 2px;
+      background: var(--orange);
+    }
+
+    .article-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 5vw, 4.8rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 2rem;
+      color: var(--ink);
+    }
+
+    .article-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--ink-muted);
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+      max-width: 60ch;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--line);
+    }
+    .meta-author {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--ink-mid);
+    }
+    .meta-divider {
+      width: 1px;
+      height: 1rem;
+      background: var(--line-dark);
+    }
+    .meta-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: var(--orange-lt);
+      padding: 0.3rem 0.8rem;
+    }
+
+    /* ARTICLE BODY */
+    .article-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 5rem;
+    }
+
+    /* SECTION BLOCK */
+    .article-section {
+      padding: 5rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .article-section:last-child { border-bottom: none; }
+
+    .section-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1.2rem;
+    }
+
+    .article-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1.8rem;
+      color: var(--ink);
+    }
+
+    .article-section p {
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--ink-mid);
+      line-height: 1.95;
+      margin-bottom: 1.4rem;
+      max-width: 68ch;
+    }
+
+    .article-section p strong {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* PULL QUOTE */
+    .pull-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+      font-style: italic;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.45;
+      padding: 1.2rem 0 1.2rem 1.8rem;
+      border-left: 3px solid var(--orange);
+      margin: 1.8rem 0;
+    }
+
+    /* IMAGE BLOCK */
+    .img-block {
+      margin: 3rem 0;
+      background: var(--bg-off);
+      border: 1px solid var(--line);
+      padding: 1.5rem 1.5rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .img-block img,
+    .img-block object {
+      width: 100%;
+      max-width: 700px;
+      height: auto;
+      display: block;
+    }
+
+    .img-caption {
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: var(--ink-muted);
+      text-align: center;
+      line-height: 1.6;
+      max-width: 56ch;
+    }
+    .img-caption strong { color: var(--ink-mid); font-weight: 600; }
+
+    /* REACTION LABELS */
+    .reaction-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+    }
+    .reaction-card {
+      padding: 1.5rem 1.8rem;
+      border: 1.5px solid var(--line);
+      background: var(--bg-off);
+    }
+    .reaction-card .rc-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .rc-blue { color: var(--blue); }
+    .rc-orange { color: var(--orange); }
+    .reaction-card p {
+      font-size: 0.92rem;
+      font-weight: 400;
+      color: var(--ink-mid);
+      line-height: 1.7;
+      margin: 0;
+      max-width: none;
+    }
+
+    /* KEY TAKEAWAY */
+    .key-takeaway {
+      background: var(--ink);
+      color: #fff;
+      padding: 3rem 3.5rem;
+      margin: 3rem 0;
+    }
+    .key-takeaway .kt-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .key-takeaway p {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 2vw, 1.55rem);
+      font-style: italic;
+      font-weight: 400;
+      color: #fff;
+      line-height: 1.6;
+      max-width: none;
+      margin: 0;
+    }
+
+
+    /* POSTER BANNER */
+    .poster-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      background: var(--ink);
+      padding: 1.6rem 2.2rem;
+      text-decoration: none;
+      margin: 2rem 0 0;
+      transition: background 0.2s;
+    }
+    .poster-banner:hover { background: #1e1c1a; }
+    .poster-banner-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .poster-banner-eyebrow {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+    .poster-banner-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 400;
+      font-style: italic;
+      color: #fff;
+      line-height: 1.4;
+    }
+    .poster-banner-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+    .poster-banner-cta {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      white-space: nowrap;
+    }
+    .poster-banner-arrow {
+      font-size: 1.1rem;
+      color: var(--orange);
+    }
+
+        /* FOOTER */
+    .article-footer {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--line);
+    }
+    .af-back {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .af-back:hover { color: var(--orange); }
+    .af-author {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: var(--ink-muted);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      #article-hero { padding: 8rem 1.5rem 3rem; }
+      .article-body { padding: 0 1.5rem; }
+      .reaction-grid { grid-template-columns: 1fr; }
+      .article-footer { padding: 3rem 1.5rem; flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Hariharan Ravi Kavitha</a>
+    <a href="index.html#articles" class="nav-back">← All Articles</a>
+  </nav>
+
+  <!-- HERO -->
+  <header id="article-hero">
+    <p class="article-tag">Pattern Formation</p>
+    <h1 class="article-title">Alan Turing<br><em style="font-weight:400;">Morphogenesis</em></h1>
+    <p class="article-subtitle">How do living things know where to place spots, stripes, and shapes? The answer lies in a beautiful interplay of chemistry and physics.</p>
+    <div class="article-meta">
+      <span class="meta-author">Hariharan Ravi Kavitha</span>
+      <div class="meta-divider"></div>
+      <span class="meta-tag">Reaction-Diffusion</span>
+      <span class="meta-tag">Diffusiophoresis</span>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <main class="article-body">
+
+    <!-- SECTION 1 — Introduction -->
+    <div class="article-section">
+      <p class="section-eyebrow">Background</p>
+      <h2>A simple but powerful question</h2>
+      <p>In 1952, <strong>Alan Turing</strong> asked a deceptively simple question: how do living things know where to place spots, stripes, and shapes? He introduced the idea of <strong>morphogenesis</strong> — the process by which patterns and forms develop in living systems.</p>
+      <p>Instead of assuming a detailed biological blueprint, Turing showed that order can emerge naturally from simple physical and chemical rules. The patterns are not pre-formed in advance — they <strong>self-organize</strong>.</p>
+
+      <div class="pull-quote">
+        Complex patterns can emerge from simple rules when chemicals or particles move and interact.
+      </div>
+
+      <a href="Animal_Pattern_poster__11_x_17_in___8_5_x_11_in___1_.pdf" target="_blank" class="poster-banner">
+        <div class="poster-banner-left">
+          <span class="poster-banner-eyebrow">Research Poster</span>
+          <span class="poster-banner-title">Alan Turing Morphogenesis — How Patterns Form in Nature</span>
+        </div>
+        <div class="poster-banner-right">
+          <span class="poster-banner-cta">View Poster</span>
+          <span class="poster-banner-arrow">↗</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- SECTION 2 — Reaction Diffusion -->
+    <div class="article-section">
+      <p class="section-eyebrow">The Mechanism</p>
+      <h2>Reaction-Diffusion: two chemicals, one pattern</h2>
+      <p>One such rule is called <strong>reaction-diffusion</strong>. In this process, chemicals react with one another as they spread through space at different speeds. A small imbalance can grow while nearby regions are suppressed, leading to stable patterns such as spots, stripes, or waves.</p>
+
+      <div class="img-block">
+        <img src="turing_example_pic.svg" alt="Turing pattern reaction-diffusion diagram" style="width:100%;height:auto;display:block;" />
+        <p class="img-caption"><strong>Fig. 1</strong> — The two-chemical system. <span style="color:var(--blue); font-weight:600;">Blue (inhibitor)</span> diffuses more slowly; <span style="color:var(--orange); font-weight:600;">Orange (activator)</span> diffuses faster. Their interaction and relative diffusion rates give rise to stable spatial patterns.</p>
+      </div>
+
+      <div class="reaction-grid">
+        <div class="reaction-card">
+          <p class="rc-label rc-orange">Activator (Orange)</p>
+          <p>Diffuses faster through space. Acts as the driving chemical — promotes its own production and that of the inhibitor.</p>
+        </div>
+        <div class="reaction-card">
+          <p class="rc-label rc-blue">Inhibitor (Blue)</p>
+          <p>Diffuses more slowly. 2 blue molecules convert 1 orange to blue. Blue also disappears over time, keeping the system dynamic.</p>
+        </div>
+      </div>
+
+      <p>When diffusion and reactions take place together, patterns form. The faster-diffusing activator creates local hotspots, while the slower inhibitor suppresses activity in surrounding regions — producing the characteristic Turing instability.</p>
+    </div>
+
+    <!-- SECTION 3 — Diffusiophoresis -->
+    <div class="article-section">
+      <p class="section-eyebrow">Going Further</p>
+      <h2>Diffusiophoresis: patterns driving more patterns</h2>
+      <p>Beyond chemical reactions, additional patterning can arise through <strong>diffusiophoresis</strong>. In many systems, reaction-diffusion first creates chemical gradients — smooth changes in concentration from one place to another — the same gradients that give rise to Turing patterns.</p>
+      <p>Diffusiophoresis then acts on top of these gradients, causing particles to move in response to them. Even without particles reacting directly, their motion is guided by these reaction-generated concentration differences, leading to <strong>enhanced or secondary patterns</strong>.</p>
+
+      <div class="key-takeaway">
+        <p class="kt-label">Key Insight</p>
+        <p>Together, these ideas show how simple local interactions — combined with motion and diffusion — can generate the rich patterns we see in nature.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 4 — Significance -->
+    <div class="article-section">
+      <p class="section-eyebrow">Why It Matters</p>
+      <h2>From theory to the natural world</h2>
+      <p>Turing's framework has since been observed across biology, chemistry, and physics — from the coat patterns of leopards and zebrafish stripes, to the formation of sand dunes, coral reefs, and even features at the nanoscale. The same mathematics that Turing wrote in 1952 continues to inform cutting-edge research in pattern formation today.</p>
+      <p>In our group, we explore how these principles extend to colloidal and electrochemical systems — where diffusiophoresis creates new opportunities for directed assembly and transport at small scales.</p>
+    </div>
+
+  </main>
+
+  <footer class="article-footer">
+    <a href="index.html#articles" class="af-back">← Back to Articles</a>
+    <span class="af-author">© 2026 Hariharan Ravi Kavitha</span>
+  </footer>
+
+  <script>
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+</body>
+</html>
