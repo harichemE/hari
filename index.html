@@ -1,403 +1,636 @@
-<!DOCTYPE HTML>
-<!--
-	Helios by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Hariharan Ravi Kavitha</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="homepage is-preload">
-		<div id="page-wrapper">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hariharan Ravi Kavitha</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-			<!-- Header -->
-				<div id="header">
+    :root {
+      --bg:        #ffffff;
+      --bg-off:    #f9f8f6;
+      --bg-card:   #f2f0ec;
+      --ink:       #111010;
+      --ink-mid:   #383430;
+      --ink-muted: #6a6258;
+      --ink-dim:   #c8c0b4;
+      --orange:    #d95f0a;
+      --orange-dk: #b54d06;
+      --orange-lt: #fde8d4;
+      --line:      #e0d8ce;
+      --line-dark: #c8bfb2;
+    }
 
-					<!-- Inner -->
-						<div class="inner">
-							<header>
-								<h1><a href="index.html" id="logo">Hey! I'm Hari</a></h1>
-								<hr />
-								<p> A Chemical Engineeing PhD student, understanding, electrification of the world though catalysis and transport phenomena</p>
-							</header>
-							<footer>
-								<a href="#banner" class="button circled scrolly">Explore</a>
-							</footer>
-						</div>
+    html { scroll-behavior: smooth; }
 
+    body {
+      font-family: 'Instrument Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-					<!-- Nav -->
-						<nav id="nav">
-							<ul>
-								<li><a href="index.html">Home</a></li>
-								<li>
-									<a href="#">Dropdown</a>
-									<ul>
-										<li><a href="#">Lorem ipsum dolor</a></li>
-										<li><a href="#">Magna phasellus</a></li>
-										<li><a href="#">Etiam dolore nisl</a></li>
-										<li>
-											<a href="#">And a submenu &hellip;</a>
-											<ul>
-												<li><a href="#">Lorem ipsum dolor</a></li>
-												<li><a href="#">Phasellus consequat</a></li>
-												<li><a href="#">Magna phasellus</a></li>
-												<li><a href="#">Etiam dolore nisl</a></li>
-											</ul>
-										</li>
-										<li><a href="#">Veroeros feugiat</a></li>
-									</ul>
-								</li>
-								<li><a href="left-sidebar.html">Research</a></li>
-								<li><a href="right-sidebar.html">Articles</a></li>
-								<li><a href="right-sidebar.html">Resources</a></li>
-								<li><a href="pages/photography/">Art & Photography</a></li>
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.4rem 5rem;
+      background: transparent;
+      transition: background 0.3s, border-color 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(255,255,255,0.88);
+      border-bottom-color: var(--line);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--orange); }
 
-							</ul>
-						</nav>
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
 
-				</div>
-								<!-- Banner -->
-				<section id="banner">
-					<header>
-						<h2>Willkommen. You're looking at <strong> About me! </strong>.</h2>
-						<p>
-							I’m Hariharan Ravi Kavitha, a chemical engineering enthusiast passionate about unraveling the mysteries 
-							of the world through science and innovation. This website is my space to showcase my scientific projects, 
-							share valuable resources, publish insightful articles, and express creativity through science comics and 
-							photography. Join me on this journey as I explore, learn, and communicate the beauty and complexity of 
-							chemical engineering and beyond.
-						</p>
-					</header>
-				</section>
-				</div>
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 5rem 4rem;
+      gap: 0;
+    }
 
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 2.8rem;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 2rem;
+      height: 2px;
+      background: var(--orange);
+      flex-shrink: 0;
+    }
 
-			<!-- Carousel -->
-				<section class="carousel">
-					<div class="reel">
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.8rem, 7.5vw, 8.5rem);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      white-space: nowrap;
+      color: var(--ink);
+      opacity: 0;
+      animation: fadeUp 0.9s 0.35s forwards;
+    }
 
-						<article>
-							<a href="article-double-layer-capacitance.html" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
-							<header>
-								<h3><a href="article-double-layer-capacitance.html">The theory of electrochemical double layer capacitance</a></h3>
-							</header>
-							<p>Explore the fundamentals of capacitors and their role in electrochemical cells</p>
-						</article>
+    .hero-desc {
+      font-size: clamp(1rem, 1.3vw, 1.15rem);
+      font-weight: 300;
+      color: var(--ink-mid);
+      max-width: 54ch;
+      line-height: 1.9;
+      margin-top: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.6s forwards;
+    }
+    .hero-desc strong { font-weight: 600; color: var(--ink); }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Fermentum sagittis proin</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    .hero-actions {
+      margin-top: 2.8rem;
+      display: flex;
+      gap: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.8s forwards;
+    }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic03.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Sed quis rhoncus placerat</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    .btn-fill {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #fff;
+      background: var(--orange);
+      text-decoration: none;
+      padding: 0.9rem 2.4rem;
+      transition: background 0.2s;
+    }
+    .btn-fill:hover { background: var(--orange-dk); }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic04.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Ultrices urna sit lobortis</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    .btn-outline {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      text-decoration: none;
+      padding: 0.9rem 2.4rem;
+      border: 1.5px solid var(--line-dark);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--ink); color: var(--ink); }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic05.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Varius magnis sollicitudin</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    /* ── SHARED ── */
+    .section-wrap { max-width: 1280px; margin: 0 auto; padding: 6rem 5rem; }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic01.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Pulvinar sagittis congue</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    .section-header {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 3.5rem;
+    }
+    .section-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--orange);
+      white-space: nowrap;
+    }
+    .section-rule { height: 1px; background: var(--line-dark); }
+    .section-header h2 {
+      display: none;
+    }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic02.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Fermentum sagittis proin</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      line-height: 1.1;
+      margin-bottom: 3rem;
+    }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic03.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Sed quis rhoncus placerat</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    .link-arrow {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 0.2s;
+    }
+    .link-arrow:hover { color: var(--orange); }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic04.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Ultrices urna sit lobortis</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    /* ── ABOUT ── */
+    #about { border-bottom: 1px solid var(--line); }
 
-						<article>
-							<a href="#" class="image featured"><img src="images/pic05.jpg" alt="" /></a>
-							<header>
-								<h3><a href="#">Varius magnis sollicitudin</a></h3>
-							</header>
-							<p>Commodo id natoque malesuada sollicitudin elit suscipit magna.</p>
-						</article>
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 0;
+    }
 
-					</div>
-				</section>
+    .about-left {
+      padding-right: 5rem;
+      border-right: 1px solid var(--line-dark);
+    }
 
-			<!-- Main -->
-				<div class="wrapper style2">
+    .about-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.8rem;
+    }
+    .about-left h2 em { font-style: italic; color: var(--orange); font-weight: 400; }
+    .about-left p {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--ink-mid);
+      line-height: 1.95;
+      margin-bottom: 1.2rem;
+    }
 
-					<article id="main" class="container special">
-						<a href="#" class="image featured"><img src="images/pic06.jpg" alt="" /></a>
-						<header>
-							<h2><a href="#">Sed massa imperdiet magnis</a></h2>
-							<p>
-								Sociis aenean eu aenean mollis mollis facilisis primis ornare penatibus aenean. Cursus ac enim
-								pulvinar curabitur morbi convallis. Lectus malesuada sed fermentum dolore amet.
-							</p>
-						</header>
-						<p>
-							Commodo id natoque malesuada sollicitudin elit suscipit. Curae suspendisse mauris posuere accumsan massa
-							posuere lacus convallis tellus interdum. Amet nullam fringilla nibh nulla convallis ut venenatis purus
-							sit arcu sociis. Nunc fermentum adipiscing tempor cursus nascetur adipiscing adipiscing. Primis aliquam
-							mus lacinia lobortis phasellus suscipit. Fermentum lobortis non tristique ante proin sociis accumsan
-							lobortis. Auctor etiam porttitor phasellus tempus cubilia ultrices tempor sagittis. Nisl fermentum
-							consequat integer interdum integer purus sapien. Nibh eleifend nulla nascetur pharetra commodo mi augue
-							interdum tellus. Ornare cursus augue feugiat sodales velit lorem. Semper elementum ullamcorper lacinia
-							natoque aenean scelerisque.
-						</p>
-						<footer>
-							<a href="#" class="button">Continue Reading</a>
-						</footer>
-					</article>
+    .about-right { padding-left: 5rem; }
 
-				</div>
+    .about-stat {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .about-stat:first-child { border-top: 1px solid var(--line); }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-align: right;
+    }
 
-			<!-- Features -->
-				<div class="wrapper style1">
+    /* ── RESEARCH ── */
+    #research {
+      background: var(--bg-off);
+      border-bottom: 1px solid var(--line);
+    }
 
-					<section id="features" class="container special">
-						<header>
-							<h2>Morbi ullamcorper et varius leo lacus</h2>
-							<p>Ipsum volutpat consectetur orci metus consequat imperdiet duis integer semper magna.</p>
-						</header>
-						<div class="row">
-							<article class="col-4 col-12-mobile special">
-								<a href="#" class="image featured"><img src="images/pic07.jpg" alt="" /></a>
-								<header>
-									<h3><a href="#">Gravida aliquam penatibus</a></h3>
-								</header>
-								<p>
-									Amet nullam fringilla nibh nulla convallis tique ante proin sociis accumsan lobortis. Auctor etiam
-									porttitor phasellus tempus cubilia ultrices tempor sagittis. Nisl fermentum consequat integer interdum.
-								</p>
-							</article>
-							<article class="col-4 col-12-mobile special">
-								<a href="#" class="image featured"><img src="images/pic08.jpg" alt="" /></a>
-								<header>
-									<h3><a href="#">Sed quis rhoncus placerat</a></h3>
-								</header>
-								<p>
-									Amet nullam fringilla nibh nulla convallis tique ante proin sociis accumsan lobortis. Auctor etiam
-									porttitor phasellus tempus cubilia ultrices tempor sagittis. Nisl fermentum consequat integer interdum.
-								</p>
-							</article>
-							<article class="col-4 col-12-mobile special">
-								<a href="#" class="image featured"><img src="images/pic09.jpg" alt="" /></a>
-								<header>
-									<h3><a href="#">Magna laoreet et aliquam</a></h3>
-								</header>
-								<p>
-									Amet nullam fringilla nibh nulla convallis tique ante proin sociis accumsan lobortis. Auctor etiam
-									porttitor phasellus tempus cubilia ultrices tempor sagittis. Nisl fermentum consequat integer interdum.
-								</p>
-							</article>
-						</div>
-					</section>
+    .research-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
 
-				</div>
+    .r-card {
+      background: var(--bg);
+      border: 1.5px solid var(--line);
+      padding: 2rem 2rem 1.8rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .r-card:hover {
+      border-color: var(--orange);
+      box-shadow: 0 4px 24px rgba(217,95,10,0.08);
+    }
+    .r-num {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1.2rem;
+    }
+    .r-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 0.9rem;
+      color: var(--ink);
+    }
+    .r-card p {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--ink-mid);
+      line-height: 1.8;
+    }
 
-			<!-- Footer -->
-				<div id="footer">
-					<div class="container">
-						<div class="row">
+    /* ── ARTICLES ── */
+    #articles { border-bottom: 1px solid var(--line); }
 
-							<!-- Tweets -->
-								<section class="col-4 col-12-mobile">
-									<header>
-										<h2 class="icon brands fa-twitter circled"><span class="label">Tweets</span></h2>
-									</header>
-									<ul class="divided">
-										<li>
-											<article class="tweet">
-												Amet nullam fringilla nibh nulla convallis tique ante sociis accumsan.
-												<span class="timestamp">5 minutes ago</span>
-											</article>
-										</li>
-										<li>
-											<article class="tweet">
-												Hendrerit rutrum quisque.
-												<span class="timestamp">30 minutes ago</span>
-											</article>
-										</li>
-										<li>
-											<article class="tweet">
-												Curabitur donec nulla massa laoreet nibh. Lorem praesent montes.
-												<span class="timestamp">3 hours ago</span>
-											</article>
-										</li>
-										<li>
-											<article class="tweet">
-												Lacus natoque cras rhoncus curae dignissim ultricies. Convallis orci aliquet.
-												<span class="timestamp">5 hours ago</span>
-											</article>
-										</li>
-									</ul>
-								</section>
+    .article-row {
+      display: grid;
+      grid-template-columns: 3.5rem 1fr auto;
+      align-items: center;
+      gap: 2rem;
+      padding: 1.8rem 0;
+      border-top: 1px solid var(--line);
+      text-decoration: none;
+      color: var(--ink);
+      transition: padding-left 0.3s;
+    }
+    .article-row:last-child { border-bottom: 1px solid var(--line); }
+    .article-row:hover { padding-left: 0.6rem; }
+    .article-row:hover .a-title { color: var(--orange); }
 
-							<!-- Posts -->
-								<section class="col-4 col-12-mobile">
-									<header>
-										<h2 class="icon solid fa-file circled"><span class="label">Posts</span></h2>
-									</header>
-									<ul class="divided">
-										<li>
-											<article class="post stub">
-												<header>
-													<h3><a href="#">Nisl fermentum integer</a></h3>
-												</header>
-												<span class="timestamp">3 hours ago</span>
-											</article>
-										</li>
-										<li>
-											<article class="post stub">
-												<header>
-													<h3><a href="#">Phasellus portitor lorem</a></h3>
-												</header>
-												<span class="timestamp">6 hours ago</span>
-											</article>
-										</li>
-										<li>
-											<article class="post stub">
-												<header>
-													<h3><a href="#">Magna tempus consequat</a></h3>
-												</header>
-												<span class="timestamp">Yesterday</span>
-											</article>
-										</li>
-										<li>
-											<article class="post stub">
-												<header>
-													<h3><a href="#">Feugiat lorem ipsum</a></h3>
-												</header>
-												<span class="timestamp">2 days ago</span>
-											</article>
-										</li>
-									</ul>
-								</section>
+    .a-num {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      color: var(--orange);
+    }
+    .a-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      transition: color 0.2s;
+    }
+    .a-tag {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: var(--orange-lt);
+      padding: 0.3rem 0.8rem;
+      white-space: nowrap;
+    }
 
-							<!-- Photos -->
-								<section class="col-4 col-12-mobile">
-									<header>
-										<h2 class="icon solid fa-camera circled"><span class="label">Photos</span></h2>
-									</header>
-									<div class="row gtr-25">
-										<div class="col-6">
-											<a href="#" class="image fit"><img src="images/pic10.jpg" alt="" /></a>
-										</div>
-										<div class="col-6">
-											<a href="#" class="image fit"><img src="images/pic11.jpg" alt="" /></a>
-										</div>
-										<div class="col-6">
-											<a href="#" class="image fit"><img src="images/pic12.jpg" alt="" /></a>
-										</div>
-										<div class="col-6">
-											<a href="#" class="image fit"><img src="images/pic13.jpg" alt="" /></a>
-										</div>
-										<div class="col-6">
-											<a href="#" class="image fit"><img src="images/pic14.jpg" alt="" /></a>
-										</div>
-										<div class="col-6">
-											<a href="#" class="image fit"><img src="images/pic15.jpg" alt="" /></a>
-										</div>
-									</div>
-								</section>
+    /* ── CONTACT ── */
+    #contact {
+      background: var(--ink);
+      color: #fff;
+    }
 
-						</div>
-						<hr />
-						<div class="row">
-							<div class="col-12">
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 0;
+      align-items: stretch;
+    }
 
-								<!-- Contact -->
-									<section class="contact">
-										<header>
-											<h3>Nisl turpis nascetur interdum?</h3>
-										</header>
-										<p>Urna nisl non quis interdum mus ornare ridiculus egestas ridiculus lobortis vivamus tempor aliquet.</p>
-										<ul class="icons">
-											<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-											<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-											<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-											<li><a href="#" class="icon brands fa-pinterest"><span class="label">Pinterest</span></a></li>
-											<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-											<li><a href="#" class="icon brands fa-linkedin-in"><span class="label">Linkedin</span></a></li>
-										</ul>
-									</section>
+    .contact-left {
+      padding-right: 5rem;
+      border-right: 1px solid rgba(255,255,255,0.1);
+    }
 
-								<!-- Copyright -->
-									<div class="copyright">
-										<ul class="menu">
-											<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-										</ul>
-									</div>
+    .contact-left .section-tag { color: var(--orange); }
 
-							</div>
+    .contact-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 3.5vw, 4rem);
+      font-weight: 600;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+    .contact-left h2 em { font-style: italic; color: var(--orange); font-weight: 400; }
 
-						</div>
-					</div>
-				</div>
+    .contact-left p {
+      font-size: 0.98rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.9;
+      max-width: 44ch;
+      margin-bottom: 2rem;
+    }
+    .email-link {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: #fff;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 3px;
+      transition: color 0.2s, border-color 0.2s;
+      word-break: break-all;
+    }
+    .email-link:hover { color: var(--orange); border-color: var(--orange); }
 
-		</div>
+    .contact-right { padding-left: 5rem; display: flex; flex-direction: column; justify-content: center; }
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.dropotron.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+    .social-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.3rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-decoration: none;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s, padding-left 0.3s;
+    }
+    .social-item:first-child { border-top: 1px solid rgba(255,255,255,0.08); }
+    .social-item:hover { color: var(--orange); padding-left: 0.6rem; }
 
-	</body>
-</html>
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      padding: 1.6rem 5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    footer span {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
 
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
 
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      nav { padding: 1.2rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero-inner { padding: 8rem 2rem 3rem; }
+      .hero-name { white-space: normal; font-size: clamp(2.8rem, 10vw, 5rem); }
+      .section-wrap { padding: 4rem 2rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-left { padding-right: 0; border-right: none; border-bottom: 1px solid var(--line); padding-bottom: 3rem; margin-bottom: 3rem; }
+      .about-right { padding-left: 0; }
+      .research-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .article-row { grid-template-columns: 2.5rem 1fr; }
+      .a-tag { display: none; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .contact-left { padding-right: 0; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 3rem; margin-bottom: 3rem; }
+      .contact-right { padding-left: 0; }
+      footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
 
+  <nav>
+    <a href="#" class="nav-logo">Hariharan Ravi Kavitha</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#articles">Articles</a></li>
+      <li><a href="pages/photography/">Art</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
 
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">PhD Candidate · University of Colorado Boulder</p>
+      <h1 class="hero-name">Hariharan Ravi Kavitha</h1>
+      <p class="hero-desc">
+        A <strong>Chemical &amp; Biological Engineering PhD student at the University of Colorado Boulder</strong> probing the frontiers of electrification — from catalytic interfaces to transport phenomena. I build understanding, and then I share it.
+      </p>
+      <div class="hero-actions">
+        <a href="#research" class="btn-fill">Explore Research</a>
+        <a href="#articles" class="btn-outline">Read Articles</a>
+      </div>
+    </div>
+  </section>
 
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-tag">About</span>
+        <div class="section-rule"></div>
+        <a href="#contact" class="link-arrow">Get in touch →</a>
+      </div>
+      <div class="about-grid">
+        <div class="about-left">
+          <h2>Science as a way of <em>seeing</em> the world.</h2>
+          <p>I'm passionate about unraveling how the physical world works — and translating that understanding into tools for a more electrified future. My work sits at the intersection of electrochemistry, reaction engineering, and the complex beauty of how things move and react.</p>
+          <p>Beyond the lab, I communicate science through articles, comics, and photography. Curiosity is the throughline.</p>
+        </div>
+        <div class="about-right">
+          <div class="about-stat">
+            <span class="stat-num">PhD</span>
+            <span class="stat-label">Chemical &amp; Biological Eng.</span>
+          </div>
+          <div class="about-stat">
+            <span class="stat-num">e⁻</span>
+            <span class="stat-label">Electrification</span>
+          </div>
+          <div class="about-stat">
+            <span class="stat-num">∂</span>
+            <span class="stat-label">Transport Phenomena</span>
+          </div>
+          <div class="about-stat">
+            <span class="stat-num">✦</span>
+            <span class="stat-label">Science Communicator</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- RESEARCH -->
+  <section id="research">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-tag">Research</span>
+        <div class="section-rule"></div>
+        <a href="left-sidebar.html" class="link-arrow">All research →</a>
+      </div>
+      <p class="section-title">What I work on</p>
+      <div class="research-grid">
+        <div class="r-card">
+          <p class="r-num">01</p>
+          <h3>Electrochemical Double Layer Capacitance</h3>
+          <p>The physics of charge accumulation at electrode interfaces — and what it means for efficiency and selectivity in electrochemical cells.</p>
+        </div>
+        <div class="r-card">
+          <p class="r-num">02</p>
+          <h3>Catalysis &amp; Reaction Engineering</h3>
+          <p>Designing catalytic systems that unlock sustainable chemical transformations and enable industrial electrification.</p>
+        </div>
+        <div class="r-card">
+          <p class="r-num">03</p>
+          <h3>Transport Phenomena</h3>
+          <p>Modeling and understanding mass, heat, and momentum transfer inside reactive electrochemical environments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- ARTICLES -->
+  <section id="articles">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-tag">Writing</span>
+        <div class="section-rule"></div>
+        <a href="right-sidebar.html" class="link-arrow">All articles →</a>
+      </div>
+      <p class="section-title">Articles &amp; Insights</p>
+      <div>
+        <a href="Animal_Pattern_poster__11_x_17_in___8_5_x_11_in___1_.pdf" target="_blank" class="article-row">
+          <span class="a-num">01</span>
+          <span class="a-title">Alan Turing Morphogenesis — How Patterns Form in Nature</span>
+          <span class="a-tag">Pattern Formation</span>
+        </a>
+        <a href="#" class="article-row">
+          <span class="a-num">02</span>
+          <span class="a-title">Transport Phenomena in Electrochemical Systems</span>
+          <span class="a-tag">Transport</span>
+        </a>
+        <a href="#" class="article-row">
+          <span class="a-num">03</span>
+          <span class="a-title">Catalysis and the Road to Electrification</span>
+          <span class="a-tag">Catalysis</span>
+        </a>
+        <a href="#" class="article-row">
+          <span class="a-num">04</span>
+          <span class="a-title">Understanding Reaction Kinetics at Interfaces</span>
+          <span class="a-tag">Kinetics</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-wrap">
+      <div class="contact-grid">
+        <div class="contact-left">
+          <p class="section-tag" style="margin-bottom:1.2rem;">Contact</p>
+          <h2>Let's <em>connect</em><br>and collaborate.</h2>
+          <p>Whether you're curious about my research, want to collaborate, or are looking for science communication — I'd love to hear from you.</p>
+          <a href="/cdn-cgi/l/email-protection#523a33203b3a3320333c7c2033243b3933243b263a3312313d3e3d2033363d7c373627" class="email-link"><span class="__cf_email__" data-cfemail="472f26352e2f26352629693526312e2c26312e332f260724282b283526232869222332">[email&#160;protected]</span></a>
+        </div>
+        <div class="contact-right">
+          <a href="#" class="social-item"><span>LinkedIn</span><span>↗</span></a>
+          <a href="#" class="social-item"><span>Google Scholar</span><span>↗</span></a>
+          <a href="#" class="social-item"><span>GitHub</span><span>↗</span></a>
+          <a href="pages/photography/" class="social-item"><span>Photography</span><span>↗</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <footer>
+    <span>© 2026 Hariharan Ravi Kavitha</span>
+    <span>Built with curiosity.</span>
+  </footer>
+
+  <script data-cfasync="false" src="
