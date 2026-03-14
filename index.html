@@ -73,6 +73,8 @@
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--orange); }
+    .nav-links a.nav-puzzles { color: var(--orange); }
+    .nav-links a.nav-puzzles:hover { color: var(--orange-dk); }
 
     /* ── HERO ── */
     #hero {
@@ -191,9 +193,7 @@
       white-space: nowrap;
     }
     .section-rule { height: 1px; background: var(--line-dark); }
-    .section-header h2 {
-      display: none;
-    }
+    .section-header h2 { display: none; }
 
     .section-title {
       font-family: 'Playfair Display', serif;
@@ -363,6 +363,115 @@
       white-space: nowrap;
     }
 
+    /* ── PUZZLES TEASER ── */
+    #puzzles {
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+    }
+
+    .puzzle-teaser {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: stretch;
+      border: 1.5px solid var(--line);
+    }
+
+    .puzzle-teaser-left {
+      padding: 3.5rem 4rem 3.5rem 0;
+      border-right: 1.5px solid var(--line);
+    }
+
+    .puzzle-teaser-left h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 2.5vw, 2.6rem);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      margin-bottom: 1rem;
+    }
+    .puzzle-teaser-left h2 em { font-style: italic; color: var(--orange); font-weight: 400; }
+
+    .puzzle-teaser-left p {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--ink-mid);
+      line-height: 1.85;
+      margin-bottom: 2rem;
+      max-width: 44ch;
+    }
+
+    .puzzle-teaser-right {
+      padding: 3.5rem 0 3.5rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.2rem;
+    }
+
+    .puzzle-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 1.5rem;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      color: var(--ink);
+      background: var(--bg-off);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .puzzle-card:hover {
+      border-color: var(--orange);
+      background: var(--orange-lt);
+    }
+    .puzzle-card:hover .puzzle-card-title { color: var(--orange); }
+
+    .puzzle-card-left { display: flex; flex-direction: column; gap: 0.3rem; }
+    .puzzle-card-id {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+    .puzzle-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .puzzle-card-tags {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-top: 0.2rem;
+    }
+    .puzzle-card-tag {
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--line);
+      padding: 0.15rem 0.45rem;
+    }
+    .puzzle-card-arrow {
+      font-size: 1rem;
+      color: var(--ink-muted);
+      transition: color 0.2s, transform 0.2s;
+    }
+    .puzzle-card:hover .puzzle-card-arrow { color: var(--orange); transform: translateX(4px); }
+
+    .puzzle-coming {
+      padding: 1.2rem 1.5rem;
+      border: 1px dashed var(--line);
+      color: var(--ink-muted);
+      font-size: 0.82rem;
+      font-style: italic;
+      font-family: 'Playfair Display', serif;
+    }
+
     /* ── CONTACT ── */
     #contact {
       background: var(--ink);
@@ -411,7 +520,6 @@
       border-bottom: 1px solid rgba(255,255,255,0.3);
       padding-bottom: 3px;
       transition: color 0.2s, border-color 0.2s;
-      word-break: break-all;
     }
     .email-link:hover { color: var(--orange); border-color: var(--orange); }
 
@@ -456,10 +564,6 @@
       from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 960px) {
@@ -474,6 +578,9 @@
       .research-grid { grid-template-columns: 1fr; gap: 1rem; }
       .article-row { grid-template-columns: 2.5rem 1fr; }
       .a-tag { display: none; }
+      .puzzle-teaser { grid-template-columns: 1fr; }
+      .puzzle-teaser-left { padding: 2.5rem 0; border-right: none; border-bottom: 1.5px solid var(--line); }
+      .puzzle-teaser-right { padding: 2.5rem 0 0; }
       .contact-grid { grid-template-columns: 1fr; }
       .contact-left { padding-right: 0; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 3rem; margin-bottom: 3rem; }
       .contact-right { padding-left: 0; }
@@ -489,6 +596,7 @@
       <li><a href="#about">About</a></li>
       <li><a href="#research">Research</a></li>
       <li><a href="#articles">Articles</a></li>
+      <li><a href="#puzzles" class="nav-puzzles">Puzzles</a></li>
       <li><a href="pages/photography/">Art</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
@@ -608,6 +716,40 @@
     </div>
   </section>
 
+  <!-- PUZZLES -->
+  <section id="puzzles">
+    <div class="section-wrap">
+      <div class="section-header">
+        <span class="section-tag">Puzzles</span>
+        <div class="section-rule"></div>
+        <a href="puzzles.html" class="link-arrow">All puzzles →</a>
+      </div>
+      <div class="puzzle-teaser">
+        <div class="puzzle-teaser-left">
+          <h2>Riddles I leave<br/>for <em>curious minds.</em></h2>
+          <p>A growing archive of puzzles. Each one hides a trail. Some are ciphers. Some are maps. Some are painted on the back of a jigsaw. Follow one to the end and you'll find something waiting.</p>
+          <a href="puzzles.html" class="btn-fill" style="display:inline-block;">Browse Puzzles →</a>
+        </div>
+        <div class="puzzle-teaser-right">
+          <a href="puzzles/brmid/" class="puzzle-card">
+            <div class="puzzle-card-left">
+              <span class="puzzle-card-id">Puzzle 01 · BRMID</span>
+              <span class="puzzle-card-title">Before Reality Made Its Design</span>
+              <div class="puzzle-card-tags">
+                <span class="puzzle-card-tag">Jigsaw</span>
+                <span class="puzzle-card-tag">Cipher</span>
+                <span class="puzzle-card-tag">Mythology</span>
+                <span class="puzzle-card-tag">Astronomy</span>
+              </div>
+            </div>
+            <span class="puzzle-card-arrow">→</span>
+          </a>
+          <div class="puzzle-coming">Puzzle 02 — Coming soon.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- CONTACT -->
   <section id="contact">
     <div class="section-wrap">
@@ -616,12 +758,12 @@
           <p class="section-tag" style="margin-bottom:1.2rem;">Contact</p>
           <h2>Let's <em>connect</em><br>and collaborate.</h2>
           <p>Whether you're curious about my research, want to collaborate, or are looking for science communication — I'd love to hear from you.</p>
-          <a href="/cdn-cgi/l/email-protection#523a33203b3a3320333c7c2033243b3933243b263a3312313d3e3d2033363d7c373627" class="email-link"><span class="__cf_email__" data-cfemail="472f26352e2f26352629693526312e2c26312e332f260724282b283526232869222332">[email&#160;protected]</span></a>
+          <a href="mailto:hariharan.ravikavitha@colorado.edu" class="email-link">hariharan.ravikavitha@colorado.edu</a>
         </div>
         <div class="contact-right">
-          <a href="#" class="social-item"><span>LinkedIn</span><span>↗</span></a>
-          <a href="#" class="social-item"><span>Google Scholar</span><span>↗</span></a>
-          <a href="#" class="social-item"><span>GitHub</span><span>↗</span></a>
+          <a href="https://www.linkedin.com/in/hariharan-ravi-kavitha" class="social-item"><span>LinkedIn</span><span>↗</span></a>
+          <a href="https://scholar.google.com" class="social-item"><span>Google Scholar</span><span>↗</span></a>
+          <a href="https://github.com/hariharan-ravi-kavitha" class="social-item"><span>GitHub</span><span>↗</span></a>
           <a href="pages/photography/" class="social-item"><span>Photography</span><span>↗</span></a>
         </div>
       </div>
@@ -633,4 +775,13 @@
     <span>Built with curiosity.</span>
   </footer>
 
-  <script data-cfasync="false" src="
+  <script>
+    // Nav scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+  </script>
+
+</body>
+</html>
