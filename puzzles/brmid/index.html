@@ -526,7 +526,7 @@ const ROUNDS = [
     clue: 'He has always had a rival. They have circled the same sky since before the first temple was built. They do not speak to each other — but they have always watched the same sky from the same Earth.\n\nShukra completes his dance. His rival completes his.\n\nThe numbers were known to every astronomer who ever looked up without a telescope. The moves of his, and the moves of his rival\'s — placed side by side.',
     hints: [
       {text:'In the ancient sky, every wandering light had a rhythm — the number of days before it returned to the same position as seen from Earth. Watch the diagram.', cost:50},
-      {text:'Shukra\'s dance takes 584 days to complete. His rival\'s takes 399. Shukra goes first — as he always has.', cost:150},
+      {text:'Shukra dances closer to the sun — his cycle is the longer one. His rival dances farther — his cycle is the shorter one. Shukra goes first.', cost:150},
     ],
     reveal:  'You have walked the road, named the stars, and counted the heavens. BRMID is complete.',
     maxAttempts: 10,
@@ -584,7 +584,7 @@ const SILK_CITIES = [
   { answer:'urgench',    letter:'U', dotId:'mdot-2', labelId:'mlabel-2', lat:'41.53°N', lng:'60.62°E', coord:[60.62, 41.53] },
   { answer:'rawalpindi', letter:'K', dotId:'mdot-3', labelId:'mlabel-3', lat:'33.58°N', lng:'73.07°E', coord:[73.07, 33.58] },
   { answer:'kashgar',    letter:'R', dotId:'mdot-4', labelId:'mlabel-4', lat:'39.47°N', lng:'75.99°E', coord:[75.99, 39.47] },
-  { answer:'anxi',       letter:'A', dotId:'mdot-5', labelId:'mlabel-5', lat:'40.06°N', lng:'95.94°E', coord:[95.94, 40.06] },
+  { answer:'anxi',       letter:'A', dotId:'mdot-5', labelId:'mlabel-5', lat:'40.52°N', lng:'95.78°E', coord:[95.78, 40.52] },
 ];
 const citySolved = new Array(SILK_CITIES.length).fill(false);
 let cityActiveIdx = null;
@@ -1070,26 +1070,6 @@ function drawOrrery(){
     }
     return { el:g, ...p };
   });
-
-  // Synodic period labels on the orrery itself
-  // Venus label with period arc annotation
-  const vPos = {x: cx + 90*Math.cos(-0.8), y: cy + 90*Math.sin(-0.8)};
-  svg.append('text').attr('x', cx+42).attr('y', cy-78)
-    .attr('text-anchor','middle')
-    .attr('font-family',"'Playfair Display',serif").attr('font-style','italic')
-    .attr('font-size',9).attr('fill','#e8c840').attr('opacity',0.75)
-    .text('584 days');
-  svg.append('text').attr('x', cx+10).attr('y', cy+170)
-    .attr('text-anchor','middle')
-    .attr('font-family',"'Playfair Display',serif").attr('font-style','italic')
-    .attr('font-size',9).attr('fill','#c8a060').attr('opacity',0.75)
-    .text('399 days');
-
-  // Synodic period indicator lines from orbit labels to orbit rings
-  svg.append('line').attr('x1',cx+42).attr('y1',cy-75).attr('x2',cx+68).attr('y2',cy-60)
-    .attr('stroke','#e8c840').attr('stroke-width',0.4).attr('opacity',0.4);
-  svg.append('line').attr('x1',cx+10).attr('y1',cy+165).attr('x2',cx+10).attr('y2',cy+178)
-    .attr('stroke','#c8a060').attr('stroke-width',0.4).attr('opacity',0.4);
 
   // Animation — simulate geocentric orbits at accelerated speed
   let t = 0;
@@ -1916,7 +1896,10 @@ function closeHints(){document.getElementById('hint-modal').classList.remove('op
 //  RATING
 // ══════════════════════════════════════════
 function lsGet(k,d){try{return JSON.parse(localStorage.getItem(k))||d;}catch{return d;}}
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzrfjAfHAG1TzqnXNfRvuoKrZ5PcRyMtPRR7EE2nKeuSsVa26LYw05JefeUWTLShDhXHA/exec';
+
 function loadIntroStats(){
+  // Show local fallback immediately, then update from sheet
   const r=lsGet('cr:'+PID,{total:0,count:0}), avg=r.count?r.total/r.count:0;
   const el=document.getElementById('intro-stars'); el.innerHTML='';
   for(let i=1;i<=5;i++){
@@ -1928,14 +1911,31 @@ function loadIntroStats(){
   document.getElementById('intro-avg').textContent=t.count?fmt(Math.round(t.total/t.count)):'—';
   const d=lsGet('cd:'+PID,{}), top=Object.entries(d).sort((a,b)=>b[1]-a[1])[0];
   document.getElementById('intro-diff').textContent=top?top[0]:'—';
+
+  // Fetch live stats from Google Sheet
+  fetch(SHEET_URL)
+    .then(r=>r.json())
+    .then(data=>{
+      if(!data.count) return;
+      // Stars
+      const avg=parseFloat(data.avg_rating)||0;
+      const starsEl=document.getElementById('intro-stars');
+      starsEl.innerHTML='';
+      for(let i=1;i<=5;i++){
+        const s=document.createElement('span');
+        s.style.cssText=`color:${avg>=i?'var(--orange)':'var(--line-dark)'};font-size:.82rem;`;
+        s.textContent='★'; starsEl.appendChild(s);
+      }
+      // Avg time
+      if(data.avg_time) document.getElementById('intro-avg').textContent=fmt(data.avg_time);
+      // Top difficulty
+      if(data.top_diff) document.getElementById('intro-diff').textContent=data.top_diff;
+    })
+    .catch(()=>{}); // silently fail — local fallback already shown
 }
-document.querySelectorAll('.spick').forEach(s=>{
-  s.addEventListener('click',()=>{userRating=+s.dataset.v;document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<userRating));});
-  s.addEventListener('mouseover',()=>{const v=+s.dataset.v;document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<v));});
-  s.addEventListener('mouseout',()=>{document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<userRating));});
-});
-function setDiff(d,btn){userDiff=d;document.querySelectorAll('.dbtn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');}
+
 function submitReview(){
+  // Save locally as before
   if(userRating>0){
     const r=lsGet('cr:'+PID,{total:0,count:0}), prev=localStorage.getItem('uv:'+PID);
     if(prev){r.total=r.total-+prev+userRating;}else{r.total+=userRating;r.count++;}
@@ -1945,8 +1945,26 @@ function submitReview(){
   const t=lsGet('ct:'+PID,{total:0,count:0}); t.total+=elapsed; t.count++;
   localStorage.setItem('ct:'+PID,JSON.stringify(t));
   if(userDiff){const d=lsGet('cd:'+PID,{});d[userDiff]=(d[userDiff]||0)+1;localStorage.setItem('cd:'+PID,JSON.stringify(d));}
+
+  // POST to Google Sheet
+  fetch(SHEET_URL, {
+    method: 'POST',
+    body: JSON.stringify({
+      time_seconds: elapsed,
+      rating:       userRating || 0,
+      difficulty:   userDiff   || ''
+    })
+  }).catch(()=>{}); // fire and forget
+
   document.getElementById('rating-modal').classList.remove('open');
 }
+
+document.querySelectorAll('.spick').forEach(s=>{
+  s.addEventListener('click',()=>{userRating=+s.dataset.v;document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<userRating));});
+  s.addEventListener('mouseover',()=>{const v=+s.dataset.v;document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<v));});
+  s.addEventListener('mouseout',()=>{document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<userRating));});
+});
+function setDiff(d,btn){userDiff=d;document.querySelectorAll('.dbtn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');}
 
 // ══════════════════════════════════════════
 //  CANVAS SIZING
