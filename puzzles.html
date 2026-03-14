@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puzzles — Hariharan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #ffffff; --bg-off: #f9f8f6; --bg-card: #f2f0ec;
+      --ink: #111010; --ink-mid: #383430; --ink-muted: #6a6258;
+      --orange: #d95f0a; --orange-dk: #b54d06; --orange-lt: #fde8d4;
+      --line: #e0d8ce; --line-dark: #c8bfb2;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Instrument Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem; height: 60px;
+      background: rgba(255,255,255,0.88); backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 600; color: var(--ink); text-decoration: none; }
+    .nav-back { font-size: 0.78rem; font-weight: 500; color: var(--ink-muted); text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-back:hover { color: var(--orange); }
+
+    .hero { padding: 140px 2.5rem 70px; max-width: 900px; margin: 0 auto; }
+    .eyebrow { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); margin-bottom: 1rem; opacity:0; animation:fadeUp 0.6s ease forwards 0.1s; }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.4rem,5vw,3.8rem); font-weight: 700; line-height: 1.12; letter-spacing: -0.02em; color: var(--ink); max-width: 600px; margin-bottom: 1rem; opacity:0; animation:fadeUp 0.6s ease forwards 0.2s; }
+    .hero p { font-size: 0.95rem; font-weight: 300; color: var(--ink-muted); max-width: 460px; line-height: 1.7; opacity:0; animation:fadeUp 0.6s ease forwards 0.3s; }
+
+    .content { max-width: 900px; margin: 0 auto; padding: 0 2.5rem 100px; }
+
+    .section-header { display: flex; align-items: center; gap: 1.2rem; margin-bottom: 2.4rem; opacity:0; animation:fadeUp 0.6s ease forwards 0.4s; }
+    .section-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); white-space: nowrap; }
+    .section-rule { flex: 1; height: 1px; background: var(--line); }
+    .section-count { font-size: 0.7rem; font-weight: 500; color: var(--ink-muted); letter-spacing: 0.04em; white-space: nowrap; }
+
+    .filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; opacity:0; animation:fadeUp 0.6s ease forwards 0.45s; }
+    .filter-btn { font-family: 'Instrument Sans', sans-serif; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.4rem 0.9rem; border: 1px solid var(--line-dark); border-radius: 2px; background: transparent; color: var(--ink-muted); cursor: pointer; transition: all 0.18s; }
+    .filter-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .filter-btn.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+    /* ── PUZZLE ROW ── */
+    .puzzle-row {
+      display: grid;
+      grid-template-columns: 2.5rem 1fr auto;
+      align-items: start;
+      gap: 1.2rem;
+      padding: 1.4rem 0;
+      border-bottom: 1px solid var(--line);
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+      opacity: 0;
+      animation: fadeUp 0.5s ease forwards;
+    }
+    .puzzle-row:first-child { border-top: 1px solid var(--line); }
+    .puzzle-row:hover { background: var(--bg-off); margin: 0 -1rem; padding-left: 1rem; padding-right: 1rem; }
+
+    .puzzle-num { font-family: 'Playfair Display', serif; font-size: 1rem; font-style: italic; color: var(--orange); text-align: right; padding-top: 0.15rem; }
+
+    .puzzle-meta { display: flex; flex-direction: column; gap: 0.4rem; }
+    .puzzle-title { font-family: 'Playfair Display', serif; font-size: 1.08rem; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; transition: color 0.2s; }
+    .puzzle-row:hover .puzzle-title { color: var(--orange); }
+
+    .puzzle-info { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+    .puzzle-date { font-size: 0.72rem; color: var(--ink-muted); }
+    .tag { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.18rem 0.5rem; border-radius: 2px; background: var(--bg-card); color: var(--ink-muted); border: 1px solid var(--line); }
+    .status-badge { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 0.18rem 0.5rem; border-radius: 2px; }
+    .status-badge.open   { background: var(--orange-lt); color: var(--orange-dk); border: 1px solid #f0c090; }
+    .status-badge.solved { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+    .status-badge.closed { background: var(--bg-card); color: var(--ink-muted); border: 1px solid var(--line); }
+
+    /* ── COMMUNITY STATS (right col) ── */
+    .puzzle-stats {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem;
+      min-width: 110px;
+    }
+    .stat-stars { display: flex; gap: 1px; }
+    .stat-star { font-size: 0.8rem; color: var(--line-dark); }
+    .stat-star.lit { color: var(--orange); }
+    .stat-line { font-size: 0.67rem; color: var(--ink-muted); letter-spacing: 0.02em; white-space: nowrap; }
+    .stat-diff { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
+    .stat-diff.Easy   { color: #2e7d32; }
+    .stat-diff.Medium { color: var(--orange); }
+    .stat-diff.Hard   { color: #c0392b; }
+
+    .empty { padding: 3rem 0; text-align: center; font-size: 0.9rem; color: var(--ink-muted); font-style: italic; display: none; }
+
+    footer { background: var(--ink); color: var(--ink-muted); text-align: center; padding: 2rem; font-size: 0.75rem; letter-spacing: 0.04em; }
+    footer a { color: var(--line-dark); text-decoration: none; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+    @media(max-width:600px) {
+      nav { padding: 0 1.2rem; }
+      .hero { padding: 120px 1.2rem 50px; }
+      .content { padding: 0 1.2rem 80px; }
+      .puzzle-stats { display: none; }
+      .puzzle-row { grid-template-columns: 2rem 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">H R K</a>
+  <a href="index.html" class="nav-back">← Home</a>
+</nav>
+
+<section class="hero">
+  <p class="eyebrow">Puzzles</p>
+  <h1>Riddles I leave<br/><em>for curious minds.</em></h1>
+  <p>A growing archive of puzzles. Each one hides a clue to the next. Ratings and difficulty come from the people who played.</p>
+</section>
+
+<div class="content">
+  <div class="section-header">
+    <span class="section-label">Archive</span>
+    <div class="section-rule"></div>
+    <span class="section-count" id="count-label">— puzzles</span>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterTag('all',this)">All</button>
+    <button class="filter-btn" onclick="filterTag('Jigsaw',this)">Jigsaw</button>
+    <button class="filter-btn" onclick="filterTag('Cipher',this)">Cipher</button>
+    <button class="filter-btn" onclick="filterTag('Mythology',this)">Mythology</button>
+    <button class="filter-btn" onclick="filterTag('Astronomy',this)">Astronomy</button>
+    <button class="filter-btn" onclick="filterTag('open',this)">Open</button>
+    <button class="filter-btn" onclick="filterTag('solved',this)">Solved</button>
+  </div>
+
+  <div id="puzzle-list"></div>
+  <p class="empty" id="empty-state">No puzzles match this filter.</p>
+</div>
+
+<footer>
+  <a href="index.html">hariharan.github.io</a> &nbsp;·&nbsp; Built with curiosity.
+</footer>
+
+<script>
+// ✏️ ADD NEW PUZZLES HERE
+const PUZZLES = [
+  {
+    id:     'brmid',
+    title:  'BRMID — Before Reality Made Its Design',
+    date:   'Mar 2025',
+    tags:   ['Jigsaw','Cipher','Geography','Mythology','Astronomy'],
+    status: 'open',
+    url:    'puzzles/brmid/',
+  },
+];
+
+// ── Community data helpers ──
+function getCR(id)   { try{ return JSON.parse(localStorage.getItem('cr:'+id))||{total:0,count:0}; }catch{return{total:0,count:0};} }
+function getCT(id)   { try{ return JSON.parse(localStorage.getItem('ct:'+id))||{total:0,count:0}; }catch{return{total:0,count:0};} }
+function getCD(id)   { try{ return JSON.parse(localStorage.getItem('cd:'+id))||{}; }catch{return{};}  }
+
+function formatTime(s) {
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  return `${m}:${(s%60).toString().padStart(2,'0')}`;
+}
+function topDiff(d) {
+  const e = Object.entries(d).sort((a,b)=>b[1]-a[1]);
+  return e.length ? e[0][0] : null;
+}
+
+// ── Render ──
+let activeFilter = 'all';
+
+function renderList() {
+  const list  = document.getElementById('puzzle-list');
+  const empty = document.getElementById('empty-state');
+  list.innerHTML = '';
+
+  const filtered = PUZZLES.filter(p => {
+    if (activeFilter === 'all')    return true;
+    if (activeFilter === 'open')   return p.status === 'open';
+    if (activeFilter === 'solved') return p.status === 'solved';
+    return p.tags.includes(activeFilter);
+  });
+
+  document.getElementById('count-label').textContent = `${filtered.length} puzzle${filtered.length!==1?'s':''}`;
+  empty.style.display = filtered.length === 0 ? 'block' : 'none';
+
+  filtered.forEach((p, i) => {
+    const cr = getCR(p.id);
+    const ct = getCT(p.id);
+    const cd = getCD(p.id);
+    const avg = cr.count > 0 ? cr.total / cr.count : 0;
+    const avgTime = ct.count > 0 ? formatTime(Math.round(ct.total/ct.count)) : null;
+    const diff = topDiff(cd);
+
+    const row = document.createElement('a');
+    row.className = 'puzzle-row';
+    row.href = p.url;
+    row.style.animationDelay = `${0.05*i + 0.5}s`;
+
+    // Stars HTML
+    let starsHTML = '';
+    for (let s=1;s<=5;s++) starsHTML += `<span class="stat-star${avg>=s?' lit':''}" >★</span>`;
+
+    // Tags HTML
+    const tagsHTML = p.tags.map(t => `<span class="tag">${t}</span>`).join('');
+
+    row.innerHTML = `
+      <span class="puzzle-num">${String(PUZZLES.indexOf(p)+1).padStart(2,'0')}</span>
+      <div class="puzzle-meta">
+        <span class="puzzle-title">${p.title}</span>
+        <div class="puzzle-info">
+          <span class="puzzle-date">${p.date}</span>
+          ${tagsHTML}
+          <span class="status-badge ${p.status}">${p.status}</span>
+        </div>
+      </div>
+      <div class="puzzle-stats">
+        <div class="stat-stars">${starsHTML}</div>
+        <span class="stat-line">${cr.count > 0 ? `${avg.toFixed(1)} · ${cr.count} rating${cr.count>1?'s':''}` : 'No ratings yet'}</span>
+        ${avgTime ? `<span class="stat-line">Avg ${avgTime}</span>` : ''}
+        ${diff ? `<span class="stat-diff ${diff}">${diff}</span>` : ''}
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function filterTag(tag, btn) {
+  activeFilter = tag;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+renderList();
+</script>
+</body>
+</html>
