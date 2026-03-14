@@ -1263,8 +1263,32 @@ function makeFace(p, imgSrc, dark){
   tracePath(c2,M,M,p.tT,p.tR,p.tB,p.tL);
   c2.save(); c2.clip();
   if(imgSrc && imgSrc.naturalWidth>0){
-    const sw=imgSrc.naturalWidth/COLS, sh=imgSrc.naturalHeight/ROWS;
-    c2.drawImage(imgSrc, p.col*sw-M, p.row*sh-M, sw+M*2, sh+M*2, 0, 0, cw, ch);
+    // Crop source to match puzzle aspect ratio (COLS*PW : ROWS*PH)
+    const targetRatio = (COLS * PW) / (ROWS * PH);
+    const srcW = imgSrc.naturalWidth, srcH = imgSrc.naturalHeight;
+    let cropW = srcW, cropH = srcH;
+    if(srcW / srcH > targetRatio){
+      cropW = Math.round(srcH * targetRatio);
+    } else {
+      cropH = Math.round(srcW / targetRatio);
+    }
+    const cropX = Math.round((srcW - cropW) / 2);
+    const cropY = Math.round((srcH - cropH) / 2);
+
+    // Slice size per piece in source pixels
+    const sw = cropW / COLS;  // source width per piece (no margin)
+    const sh = cropH / ROWS;  // source height per piece
+
+    // Source region including margin (M canvas px = M/PW * sw source px)
+    const mSrcX = (M / PW) * sw;
+    const mSrcY = (M / PH) * sh;
+
+    const sx = cropX + p.col * sw - mSrcX;
+    const sy = cropY + p.row * sh - mSrcY;
+    const sDrawW = sw + 2 * mSrcX;
+    const sDrawH = sh + 2 * mSrcY;
+
+    c2.drawImage(imgSrc, sx, sy, sDrawW, sDrawH, 0, 0, cw, ch);
     if(dark){c2.fillStyle='rgba(0,0,0,.45)';c2.fillRect(0,0,cw,ch);}
   } else {
     c2.fillStyle=`hsl(${p.idx*18},25%,${dark?55:75}%)`; c2.fillRect(0,0,cw,ch);
