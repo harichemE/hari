@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BRMID</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#fff;--bg-off:#f9f8f6;--bg-card:#f2f0ec;
+  --ink:#111;--ink-mid:#383430;--ink-muted:#6a6258;
+  --orange:#d95f0a;--orange-dk:#b54d06;--orange-lt:#fde8d4;
+  --line:#e0d8ce;--line-dark:#c8bfb2;
+  --d1:#101010;--d2:#181818;--d3:#222;--d4:#2c2c2c;--d5:#383838;
+}
+html,body{height:100%;font-family:'Instrument Sans',sans-serif;overflow:hidden;background:var(--bg-off);}
+
+nav{position:fixed;top:0;left:0;right:0;height:56px;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(255,255,255,0.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--line);}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:var(--ink);text-decoration:none;}
+.nav-mid{font-family:'Playfair Display',serif;font-size:.82rem;color:var(--ink-muted);font-style:italic;}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+#nav-timer{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;color:var(--orange);display:none;}
+.nav-back{font-size:.68rem;font-weight:500;color:var(--ink-muted);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:color .2s;}
+.nav-back:hover{color:var(--orange);}
+
+.screen{display:none;position:fixed;inset:0;top:56px;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* INTRO */
+#screen-intro{background:var(--bg);align-items:center;justify-content:center;overflow-y:auto;padding:60px 1.5rem;}
+.ii{max-width:520px;width:100%;}
+.eyebrow{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.7rem;animation:fu .5s ease forwards .1s;}
+.ih1{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,5vw,3.1rem);font-weight:700;line-height:1.1;letter-spacing:-.02em;color:var(--ink);margin-bottom:.4rem;animation:fu .5s ease forwards .2s;}
+.isub{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:var(--ink-muted);margin-bottom:1.5rem;animation:fu .5s ease forwards .3s;}
+.irule{height:1px;background:var(--line);margin-bottom:1.5rem;animation:fu .5s ease forwards .33s;}
+.itags{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1.3rem;animation:fu .5s ease forwards .38s;}
+.itag{font-size:.6rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:.2rem .55rem;border:1px solid var(--line);border-radius:2px;background:var(--bg-card);color:var(--ink-muted);}
+.idesc{font-size:.87rem;line-height:1.75;color:var(--ink-mid);margin-bottom:1.5rem;animation:fu .5s ease forwards .43s;}
+.imeta{display:flex;gap:1.8rem;margin-bottom:1.7rem;animation:fu .5s ease forwards .48s;flex-wrap:wrap;}
+.imi{display:flex;flex-direction:column;gap:.14rem;}
+.iml{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);}
+.imv{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--ink);}
+.srow{display:flex;gap:2px;}
+.irules{background:var(--bg-card);border:1px solid var(--line);border-left:3px solid var(--orange);padding:.85rem 1rem;border-radius:0 3px 3px 0;margin-bottom:1.5rem;font-size:.79rem;line-height:1.8;color:var(--ink-muted);animation:fu .5s ease forwards .53s;}
+.irules strong{color:var(--ink);}
+.btn-go{font-family:'Instrument Sans',sans-serif;font-size:.85rem;font-weight:600;padding:.8rem 2rem;background:var(--orange);color:#fff;border:none;border-radius:3px;cursor:pointer;transition:background .2s;animation:fu .5s ease forwards .58s;}
+.btn-go:hover{background:var(--orange-dk);}
+
+/* PUZZLE SCREEN */
+#screen-puzzle{flex-direction:row;background:var(--bg-off);gap:10px;padding:10px;align-items:flex-start;}
+
+/* LEFT COLUMN — tray + spacer matches centre height */
+.left-col{display:flex;flex-direction:column;gap:10px;flex-shrink:0;align-self:stretch;}
+
+/* TRAY — floating card, fills left column */
+.tray{width:130px;background:var(--bg);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;overflow:hidden;flex:1;min-height:0;}
+.tray-hdr{padding:.5rem .7rem .35rem;flex-shrink:0;border-bottom:1px solid var(--line);}
+.tray-title{font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);}
+.tray-cnt{font-size:.54rem;color:var(--line-dark);margin-top:.1rem;}
+#tray-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:.45rem;display:grid;grid-template-columns:1fr 1fr;gap:5px;align-content:start;min-height:0;}
+#tray-scroll::-webkit-scrollbar{width:3px;}
+#tray-scroll::-webkit-scrollbar-thumb{background:var(--line);}
+.tp{cursor:grab;border-radius:3px;display:block;border:1.5px solid transparent;transition:border-color .15s;width:100%;aspect-ratio:auto;}
+.tp:hover{border-color:var(--orange);}
+
+/* CENTRE — canvas card + code card stacked */
+.centre{flex:1;display:flex;flex-direction:column;min-width:0;gap:10px;align-self:stretch;}
+.canvas-wrap{flex:1;position:relative;overflow:hidden;background:var(--bg);border:1px solid var(--line);border-radius:8px;}
+#jc{display:block;touch-action:none;cursor:default;}
+
+/* CODE CARD */
+.code-bar{flex-shrink:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.75rem 1rem;display:flex;flex-direction:column;gap:.55rem;}
+.code-top{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.cb-lbl{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);white-space:nowrap;}
+#code-input{font-family:'Instrument Sans',sans-serif;font-size:.86rem;font-weight:500;letter-spacing:.08em;padding:.4rem .75rem;border:1px solid var(--line-dark);border-radius:4px;background:var(--bg-off);color:var(--ink);outline:none;width:180px;transition:border-color .2s;}
+#code-input:focus{border-color:var(--orange);}
+#code-input.err{border-color:#c0392b;animation:shake .35s ease;}
+#code-input.ok{border-color:#27ae60;}
+.btn-unlock{font-family:'Instrument Sans',sans-serif;font-size:.76rem;font-weight:600;padding:.4rem 1rem;background:var(--orange);color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.btn-unlock:hover{background:var(--orange-dk);}
+.cb-fb{font-size:.7rem;color:transparent;}
+.cb-fb.err{color:#c0392b;}.cb-fb.ok2{color:#27ae60;}.cb-fb.hint{color:var(--ink-muted);font-style:italic;}
+.adots{display:flex;gap:4px;align-items:center;}
+.adot{width:6px;height:6px;border-radius:50%;background:var(--line);}
+.adot.wrong{background:#fde8d4;border:1px solid #c0392b;}
+/* explanation row */
+.code-explain{font-size:.64rem;color:var(--ink-muted);line-height:1.55;padding-top:.35rem;border-top:1px solid var(--line);}
+.code-explain strong{color:var(--ink);font-weight:600;}
+#code-reveal{display:none;padding:.5rem .75rem;border-left:2px solid var(--orange);background:var(--orange-lt);border-radius:0 4px 4px 0;font-family:'Playfair Display',serif;font-size:.78rem;font-style:italic;color:var(--ink-mid);line-height:1.5;}
+
+/* RIGHT PANEL — floating card, full height */
+.rpanel{width:206px;flex-shrink:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;overflow:hidden;align-self:stretch;}
+.tb{padding:.6rem .75rem;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:.5rem;flex-shrink:0;}
+.tb-row{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap;}
+.tb-stat{font-size:.6rem;font-weight:600;letter-spacing:.05em;padding:.2rem .5rem;border:1px solid var(--line);border-radius:3px;color:var(--ink-muted);white-space:nowrap;}
+.tb-stat span{color:var(--orange);}
+.tbbtn{font-family:'Instrument Sans',sans-serif;font-size:.68rem;font-weight:600;padding:.26rem .65rem;background:transparent;border:1px solid var(--line-dark);border-radius:3px;color:var(--ink-muted);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.tbbtn:hover{border-color:var(--orange);color:var(--orange);}
+.tbbtn.ora{background:var(--orange);border-color:var(--orange);color:#fff;}
+.tbbtn.ora:hover{background:var(--orange-dk);}
+.pbody{flex:1;overflow:hidden;position:relative;}
+.pane{display:flex;position:absolute;inset:0;flex-direction:column;}
+textarea.notes{flex:1;width:100%;background:transparent;border:none;outline:none;resize:none;font-family:'Instrument Sans',sans-serif;font-size:.76rem;line-height:1.65;color:var(--ink-mid);padding:.75rem;caret-color:var(--orange);}
+textarea.notes::placeholder{color:var(--line-dark);}
+
+/* MODALS */
+.mo{display:none;position:fixed;inset:0;z-index:700;background:rgba(255,255,255,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;}
+.mo.open{display:flex;}
+.mcard{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1.7rem;max-width:350px;width:100%;box-shadow:0 8px 40px rgba(0,0,0,.12);animation:fu .3s ease forwards;}
+.mtt{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--ink);margin-bottom:.3rem;}
+.msub{font-size:.74rem;color:var(--ink-muted);margin-bottom:1.2rem;line-height:1.6;}
+.msec{margin-bottom:1rem;}
+.mlb{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem;}
+.spick-row{display:flex;gap:4px;}
+.spick{font-size:1.2rem;cursor:pointer;color:var(--line-dark);transition:color .15s,transform .1s;}
+.spick:hover,.spick.lit{color:var(--orange);}
+.spick:hover{transform:scale(1.15);}
+.drow{display:flex;gap:.3rem;}
+.dbtn{font-size:.66rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:.3rem .7rem;border:1px solid var(--line-dark);border-radius:2px;background:transparent;color:var(--ink-muted);cursor:pointer;transition:all .18s;}
+.dbtn:hover{border-color:var(--orange);color:var(--orange);}
+.dbtn.act{background:var(--orange);border-color:var(--orange);color:#fff;}
+.mstats{background:var(--bg-off);border:1px solid var(--line);border-radius:3px;padding:.7rem .9rem;display:flex;gap:1.4rem;margin-bottom:1rem;}
+.mstat{display:flex;flex-direction:column;gap:.1rem;}
+.msl{font-size:.56rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);}
+.msv{font-family:'Playfair Display',serif;font-size:.88rem;color:var(--ink);}
+.btn-sub{width:100%;font-family:'Instrument Sans',sans-serif;font-size:.78rem;font-weight:600;padding:.72rem;background:var(--orange);color:#fff;border:none;border-radius:3px;cursor:pointer;transition:background .2s;}
+.btn-sub:hover{background:var(--orange-dk);}
+.hlist{display:flex;flex-direction:column;gap:.38rem;margin-bottom:1.1rem;}
+.hi{display:flex;align-items:center;gap:.45rem;padding:.52rem .7rem;border:1px solid var(--line);border-radius:3px;font-size:.74rem;color:var(--ink-mid);}
+.hi.used{opacity:.45;}
+.hcost{font-size:.58rem;font-weight:600;color:var(--orange);white-space:nowrap;margin-left:auto;}
+.btn-use{font-size:.64rem;font-weight:600;padding:.2rem .5rem;background:var(--orange);color:#fff;border:none;border-radius:2px;cursor:pointer;flex-shrink:0;}
+.btn-cls{width:100%;font-size:.72rem;padding:.45rem;background:transparent;border:1px solid var(--line);color:var(--ink-muted);border-radius:3px;cursor:pointer;}
+.btn-cls:hover{border-color:var(--line-dark);}
+
+/* placeholder font size smaller */
+#code-input::placeholder{font-size:.68rem;letter-spacing:.04em;}
+
+/* FLIP button floating on canvas */
+.canvas-flip{font-family:'Instrument Sans',sans-serif;font-size:.72rem;font-weight:600;padding:.28rem .75rem;background:var(--orange);color:#fff;border:none;border-radius:3px;cursor:pointer;transition:background .2s;}
+.canvas-flip:hover{background:var(--orange-dk);}
+.canvas-flip.flipped{background:var(--ink);}
+
+/* CIPHER SCREEN */
+#screen-cipher{flex-direction:row;background:var(--bg-off);}
+.cipher-wrap{display:flex;flex:1;gap:10px;padding:10px;height:100%;}
+.cipher-centre{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:1.5rem 1.75rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto;}
+.cipher-eyebrow{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin:0;}
+.cipher-clue{font-family:'Playfair Display',serif;font-size:1.05rem;font-style:italic;line-height:1.85;color:var(--ink-mid);padding:1.1rem 1.25rem;background:var(--bg-off);border-left:3px solid var(--orange);border-radius:0 4px 4px 0;margin:0;}
+.cipher-input-wrap{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+#cipher-input{font-family:'Instrument Sans',sans-serif;font-size:.9rem;font-weight:500;padding:.4rem .75rem;border:1px solid var(--line-dark);border-radius:4px;background:var(--bg-off);color:var(--ink);outline:none;width:200px;transition:border-color .2s;}
+#cipher-input:focus{border-color:var(--orange);}
+#cipher-input.err{border-color:#c0392b;animation:shake .35s ease;}
+#cipher-input.ok{border-color:#27ae60;}
+.cipher-reveal-box{padding:.6rem .85rem;border-left:2px solid var(--orange);background:var(--orange-lt);border-radius:0 4px 4px 0;font-family:'Playfair Display',serif;font-size:.82rem;font-style:italic;color:var(--ink-mid);line-height:1.6;}
+.cipher-right{width:180px;flex-shrink:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;}
+/* solved pill */
+.solved-pill{font-family:'Instrument Sans',sans-serif;font-size:.62rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:.22rem .65rem;background:transparent;border:1px solid #27ae60;color:#27ae60;border-radius:20px;cursor:pointer;transition:background .15s,color .15s;}
+.solved-pill:hover{background:#27ae60;color:#fff;}
+
+/* ORRERY SCREEN */
+#screen-orrery{flex-direction:row;background:var(--bg-off);}
+.orrery-wrap{display:flex;flex:1;gap:10px;padding:10px;min-height:0;overflow:hidden;}
+.orrery-left{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:1.5rem 1.75rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto;min-width:0;}
+.orrery-clue{font-family:'Playfair Display',serif;font-size:.95rem;font-style:italic;line-height:1.85;color:var(--ink-mid);padding:1rem 1.2rem;background:var(--bg-off);border-left:3px solid var(--orange);border-radius:0 4px 4px 0;}
+.orrery-input-wrap{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.orrery-right{width:340px;flex-shrink:0;display:flex;flex-direction:column;gap:10px;}
+.orrery-diagram-card{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:1rem;flex-shrink:0;}
+.orrery-diagram-lbl{font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.6rem;text-align:center;}
+.orrery-legend{display:flex;flex-direction:column;gap:.35rem;margin-top:.75rem;padding:.5rem .75rem;background:var(--bg-off);border-radius:4px;border:1px solid var(--line);}
+.orrery-leg-item{display:flex;align-items:center;gap:.5rem;font-size:.72rem;color:var(--ink-mid);}
+.orrery-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.orrery-num{margin-left:auto;font-family:'Playfair Display',serif;font-weight:600;color:var(--ink);font-size:.8rem;letter-spacing:.05em;}
+.orrery-notes-card{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;flex:1;min-height:80px;}
+@media(max-width:700px){.orrery-wrap{flex-direction:column;} .orrery-right{width:100%;}}
+#screen-map{flex-direction:row;background:var(--bg-off);}
+.map-screen-wrap{display:flex;flex:1;gap:10px;padding:10px;min-height:0;overflow:hidden;}
+.map-main{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0;overflow-y:auto;}
+.map-right{width:180px;flex-shrink:0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;}
+.map-clue-card{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:1rem 1.2rem;flex-shrink:0;}
+.map-clue-eyebrow{font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.5rem;}
+.map-clue-text{font-family:'Playfair Display',serif;font-size:.88rem;font-style:italic;line-height:1.75;color:var(--ink-mid);border-left:3px solid var(--orange);padding-left:.85rem;}
+.map-card-wrap{background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;flex-shrink:0;position:relative;}
+.city-popup{display:none;position:fixed;z-index:2000;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.85rem 1rem .75rem;min-width:210px;box-shadow:0 8px 28px rgba(17,16,16,.12);}
+.city-popup::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--orange);border-radius:8px 8px 0 0;}
+.popup-lbl{font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.5rem;}
+.popup-input{font-family:'Instrument Sans',sans-serif;font-size:.88rem;font-weight:500;padding:.38rem .65rem;border:1px solid var(--line-dark);border-radius:4px;background:var(--bg-off);color:var(--ink);outline:none;width:100%;transition:border-color .2s;}
+.popup-input:focus{border-color:var(--orange);}
+.popup-input.err{border-color:#c0392b;animation:shake .3s ease;}
+.popup-footer{display:flex;align-items:center;gap:.5rem;margin-top:.55rem;}
+.popup-submit{font-family:'Instrument Sans',sans-serif;font-size:.74rem;font-weight:600;padding:.35rem .9rem;background:var(--orange);color:#fff;border:none;border-radius:4px;cursor:pointer;transition:background .2s;}
+.popup-submit:hover{background:var(--orange-dk);}
+.popup-close{margin-left:auto;background:none;border:none;font-size:1rem;color:var(--ink-muted);cursor:pointer;line-height:1;padding:.1rem .3rem;transition:color .15s;}
+.popup-close:hover{color:var(--ink);}
+.map-letters-card{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:1.1rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:.9rem;flex-shrink:0;}
+.map-letters-lbl{font-size:.58rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-muted);}
+.map-letters-row{display:flex;gap:1.6rem;align-items:flex-end;}
+.map-letter-slot{display:flex;flex-direction:column;align-items:center;gap:.3rem;}
+.map-letter-char{font-family:'Playfair Display',serif;font-style:italic;font-size:2.2rem;font-weight:600;color:var(--ink);line-height:1;min-width:1.3rem;text-align:center;opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease;}
+.map-letter-char.revealed{opacity:1;transform:translateY(0);}
+.map-letter-line{width:1.5rem;height:1px;background:var(--line-dark);}
+.map-completion{display:none;font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;color:var(--ink-mid);text-align:center;padding:.7rem 1.2rem;background:var(--orange-lt);border:1px solid var(--line);border-left:3px solid var(--orange);border-radius:0 4px 4px 0;line-height:1.75;max-width:380px;}
+.map-completion.show{display:block;animation:fu .6s ease forwards;}
+@keyframes fu{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../../index.html" class="nav-logo">H R K</a>
+  <span class="nav-mid">BRMID</span>
+  <div class="nav-right">
+    <span id="nav-timer">00:00</span>
+    <span class="tb-stat" id="nav-pts" style="display:none;">Points: <span id="tb-pts">1000</span></span>
+    <button class="tbbtn" id="nav-hint-btn" onclick="openHints()" style="display:none;">💡 Hint</button>
+    <a href="../../puzzles.html" class="nav-back" id="nav-back-link">← Puzzles</a>
+  </div>
+</nav>
+
+<!-- INTRO -->
+<div id="screen-intro" class="screen active">
+  <div class="ii">
+    <p class="eyebrow">Puzzle 01 · BRMID</p>
+    <h1 class="ih1">Before Reality<br/>Made Its Design</h1>
+    <p class="isub">A puzzle in five disciplines.</p>
+    <div class="irule"></div>
+    <div class="itags">
+      <span class="itag">Logic</span><span class="itag">Pattern Recognition</span>
+      <span class="itag">Linguistics</span><span class="itag">History</span>
+      <span class="itag">Geography</span><span class="itag">Art</span><span class="itag">Mythology</span>
+    </div>
+    <p class="idesc">A puzzle in four parts. Each round reveals the next. The trail begins with fragments of a painting and ends somewhere in the ancient sky. Follow what each answer leads to — the disciplines shift as you go.</p>
+    <div class="imeta">
+      <div class="imi"><span class="iml">Rounds</span><span class="imv">4</span></div>
+      <div class="imi"><span class="iml">Rating</span><div class="srow" id="intro-stars"></div></div>
+      <div class="imi"><span class="iml">Difficulty</span><span class="imv" id="intro-diff">—</span></div>
+      <div class="imi"><span class="iml">Avg Time</span><span class="imv" id="intro-avg">—</span></div>
+    </div>
+    <div class="irules">
+      <strong>How to play —</strong> Each round is different. Solve what's in front of you. The answer to each round unlocks the next. Use hints if you're stuck — they cost points. Your timer runs across all four rounds.
+    </div>
+    <button class="btn-go" onclick="startPuzzle()">Begin Puzzle →</button>
+  </div>
+</div>
+
+<!-- PUZZLE -->
+<div id="screen-puzzle" class="screen">
+  <div class="left-col">
+    <div class="tray">
+      <div class="tray-hdr">
+        <div class="tray-title">Pieces</div>
+        <div class="tray-cnt" id="tray-cnt">20 remaining</div>
+      </div>
+      <div id="tray-scroll"></div>
+    </div>
+  </div>
+
+  <div class="centre">
+    <div class="canvas-wrap" id="canvas-wrap">
+      <canvas id="jc"></canvas>
+      <div style="position:absolute;top:12px;right:12px;display:flex;align-items:center;gap:8px;z-index:10;">
+        <span id="canvas-placed" style="font-size:.65rem;font-weight:600;letter-spacing:.05em;color:var(--ink-muted);background:rgba(255,255,255,.85);backdrop-filter:blur(6px);padding:.25rem .55rem;border-radius:3px;border:1px solid var(--line);">0/20</span>
+        <button class="canvas-flip" id="flip-btn" onclick="toggleFlip()">✦ Flip All</button>
+      </div>
+    </div>
+    <div class="code-bar">
+      <div class="code-top">
+        <span class="cb-lbl">Code</span>
+        <input id="code-input" type="text" maxlength="12" placeholder="anomalies in order…" autocomplete="off" spellcheck="false"/>
+        <button class="btn-unlock" onclick="checkCode()">Unlock →</button>
+        <span class="cb-fb" id="cbfb"></span>
+        <div class="adots" id="adots">
+          <div class="adot"></div><div class="adot"></div><div class="adot"></div>
+          <div class="adot"></div><div class="adot"></div><div class="adot"></div>
+          <div class="adot"></div><div class="adot"></div><div class="adot"></div>
+          <div class="adot"></div>
+        </div>
+      </div>
+      <div class="code-explain">
+        Flip the pieces — it will give you another clue. Decipher and unlock. You have <strong>10 attempts</strong>.
+      </div>
+      <div id="prev-clues" style="display:none;margin-top:.35rem;padding:.5rem .75rem;background:var(--bg-off);border-radius:4px;border:1px solid var(--line);">
+        <div style="font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem;">Previous clues</div>
+        <div id="prev-clues-list" style="display:flex;flex-direction:column;gap:.3rem;font-family:'Playfair Display',serif;font-size:.78rem;font-style:italic;color:var(--ink-mid);line-height:1.5;"></div>
+      </div>
+      <div id="code-reveal">
+        <!-- REPLACE with real next clue -->
+        Well done. The next clue awaits where stars are not merely seen — but counted.
+      </div>
+    </div>
+  </div>
+
+  <div class="rpanel">
+    <div class="pbody">
+      <div class="pane" id="pane-notes">
+        <textarea class="notes" id="notes-area" placeholder="Notes…"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CIPHER SCREEN — round 2+ text-only challenge -->
+<div id="screen-cipher" class="screen">
+  <div class="cipher-wrap">
+    <div class="cipher-centre">
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+        <p class="cipher-eyebrow" id="cipher-eyebrow" style="margin:0;">Round 2</p>
+        <button class="solved-pill" id="solved-pill-btn" onclick="toggleSolvedDrawer()" style="display:none;">Round 1 ✓</button>
+      </div>
+      <div class="cipher-clue" id="cipher-clue"></div>
+      <div class="cipher-input-wrap">
+        <span class="cb-lbl">Answer</span>
+        <input id="cipher-input" type="text" maxlength="40" placeholder="enter your answer…" autocomplete="off" spellcheck="false"/>
+        <button class="btn-unlock" onclick="checkCipherCode()">Unlock →</button>
+        <span class="cb-fb" id="cipher-fb"></span>
+      </div>
+      <div class="adots" id="cipher-adots" style="margin-top:.5rem;"></div>
+      <div id="cipher-reveal" class="cipher-reveal-box" style="display:none;"></div>
+    </div>
+    <div class="cipher-right">
+      <div class="cipher-lbl">Notes</div>
+      <textarea class="notes" id="cipher-notes" placeholder="Notes…" style="flex:1;width:100%;"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- MAP SCREEN — round 3 silk road puzzle -->
+<div id="screen-map" class="screen">
+  <div class="map-screen-wrap">
+    <div class="map-main">
+      <!-- Clue card — collapsible -->
+      <div class="map-clue-card" id="map-clue-card">
+        <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.4rem;cursor:pointer;" onclick="toggleMapClue()">
+          <div class="map-clue-eyebrow" id="map-clue-eyebrow" style="margin:0;">Round 3</div>
+          <button class="solved-pill" id="map-solved-pill" onclick="event.stopPropagation();toggleSolvedDrawer()" style="display:none;"></button>
+          <span id="map-clue-toggle" style="margin-left:auto;font-size:.62rem;color:var(--ink-muted);font-family:'Instrument Sans',sans-serif;">▲ Hide clue</span>
+        </div>
+        <div class="map-clue-text" id="map-clue-text"></div>
+      </div>
+      <!-- Map card -->
+      <div class="map-card-wrap" style="position:relative;">
+        <div id="map-tooltip" style="display:none;position:fixed;z-index:3000;background:var(--ink);color:#fff;font-family:'Instrument Sans',sans-serif;font-size:.65rem;font-weight:500;padding:.28rem .6rem;border-radius:4px;pointer-events:none;letter-spacing:.04em;white-space:nowrap;"></div>
+        <!-- D3 map renders here -->
+        <svg id="silk-map-svg" width="100%" style="display:block;background:#c8dce8;"></svg>
+        <!-- circa 100 AD badge -->
+        <div style="position:absolute;bottom:10px;right:10px;background:rgba(244,238,220,.92);border:1px solid #9a8a6a;border-radius:3px;padding:5px 10px;text-align:center;pointer-events:none;">
+          <div style="font-family:'Instrument Sans',sans-serif;font-size:.52rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6a5a4a;margin-bottom:2px;">The Region</div>
+          <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;color:#2a1f0e;">circa 100 <span style="font-style:normal;font-size:.7rem;">AD</span></div>
+        </div>
+      </div>
+
+      <!-- Final answer submit -->
+      <div class="map-letters-card">
+        <div id="map-final-wrap" style="display:none;flex-direction:column;align-items:center;gap:.5rem;">
+          <div style="font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);">Submit your answer</div>
+          <div style="display:flex;align-items:center;gap:.5rem;">
+            <input id="map-final-input" type="text" maxlength="20" placeholder="enter the word…"
+              style="font-family:'Instrument Sans',sans-serif;font-size:.88rem;font-weight:500;padding:.38rem .65rem;border:1px solid var(--line-dark);border-radius:4px;background:var(--bg-off);color:var(--ink);outline:none;width:160px;transition:border-color .2s;"
+              autocomplete="off" spellcheck="false"/>
+            <button onclick="submitMapFinalAnswer()" style="font-family:'Instrument Sans',sans-serif;font-size:.74rem;font-weight:600;padding:.38rem 1rem;background:var(--orange);color:#fff;border:none;border-radius:4px;cursor:pointer;">Submit →</button>
+          </div>
+          <span id="map-final-fb" style="font-size:.7rem;color:var(--ink-muted);"></span>
+        </div>
+      </div>
+    </div>
+    <div class="map-right">
+      <div class="cipher-lbl">Notes</div>
+      <textarea class="notes" id="map-notes" placeholder="Notes…" style="flex:1;width:100%;"></textarea>
+    </div>
+  </div>
+</div>
+
+
+<!-- ORRERY SCREEN — round 4 geocentric diagram -->
+<div id="screen-orrery" class="screen">
+  <div class="orrery-wrap">
+    <div class="orrery-left">
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.6rem;">
+        <p class="cipher-eyebrow" id="orrery-eyebrow" style="margin:0;">Round 4</p>
+        <button class="solved-pill" id="orrery-solved-pill" onclick="toggleSolvedDrawer()" style="display:none;"></button>
+      </div>
+      <div class="orrery-clue" id="orrery-clue"></div>
+      <div class="orrery-input-wrap">
+        <span class="cb-lbl">Code</span>
+        <input id="orrery-input" type="text" maxlength="12" placeholder="enter numerical code…" autocomplete="off" spellcheck="false"
+          style="font-family:'Instrument Sans',sans-serif;font-size:.9rem;font-weight:500;padding:.4rem .75rem;border:1px solid var(--line-dark);border-radius:4px;background:var(--bg-off);color:var(--ink);outline:none;width:180px;letter-spacing:.1em;transition:border-color .2s;"/>
+        <button class="btn-unlock" onclick="checkOrreryCode()">Unlock →</button>
+        <span class="cb-fb" id="orrery-fb"></span>
+      </div>
+      <div class="adots" id="orrery-adots" style="margin-top:.5rem;"></div>
+      <div id="orrery-reveal" class="cipher-reveal-box" style="display:none;"></div>
+    </div>
+    <div class="orrery-right">
+      <div class="orrery-diagram-card">
+        <svg id="orrery-svg" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block;"></svg>
+      </div>
+      <div class="orrery-notes-card">
+        <div class="cipher-lbl">Notes</div>
+        <textarea class="notes" id="orrery-notes" placeholder="Notes…" style="flex:1;width:100%;"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="city-popup" id="city-popup">
+  <div class="popup-lbl">Name this city</div>
+  <input class="popup-input" id="city-popup-input" type="text" placeholder="enter city name…" autocomplete="off" spellcheck="false"/>
+  <div class="popup-footer">
+    <button class="popup-submit" onclick="submitCityAnswer()">Confirm →</button>
+    <button class="popup-close" onclick="closeCityPopup()">✕</button>
+  </div>
+</div>
+<div class="mo" id="solved-drawer">
+  <div class="mcard" style="max-width:480px;">
+    <div class="mtt" id="solved-drawer-title">Round 1 — Solved</div>
+    <div class="msub">Rounds you've completed — click to review.</div>
+    <div id="drawer-tabs" style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem;"></div>
+    <div id="drawer-body">
+      <div style="margin-bottom:.75rem;">
+        <div style="font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.35rem;">Code found</div>
+        <div id="drawer-code" style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--orange);letter-spacing:.08em;"></div>
+      </div>
+      <div id="drawer-puzzle-wrap">
+        <div style="font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.4rem;">Solved puzzle</div>
+        <canvas id="cipher-preview" style="width:100%;border-radius:4px;border:1px solid var(--line);display:block;margin-bottom:.75rem;"></canvas>
+      </div>
+      <div style="font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.35rem;">Clue for this round</div>
+      <div id="drawer-clue" style="font-family:'Playfair Display',serif;font-size:.8rem;font-style:italic;line-height:1.65;color:var(--ink-mid);padding:.65rem .8rem;background:var(--bg-off);border-left:2px solid var(--orange);border-radius:0 4px 4px 0;margin-bottom:1rem;"></div>
+    </div>
+    <button class="btn-cls" onclick="toggleSolvedDrawer()">← Back to puzzle</button>
+  </div>
+</div>
+<div class="mo" id="hint-modal">
+  <div class="mcard">
+    <div class="mtt">Hints</div>
+    <div class="msub">Each hint costs points. Revealed hints stay visible.</div>
+    <div class="hlist" id="hlist"></div>
+    <button class="btn-cls" onclick="closeHints()">Close</button>
+  </div>
+</div>
+
+<div class="mo" id="rating-modal">
+  <div class="mcard">
+    <div class="mtt">How was BRMID?</div>
+    <div class="msub">Rate the puzzle — your score shows in the archive.</div>
+    <div class="mstats">
+      <div class="mstat"><span class="msl">Time</span><span class="msv" id="m-time">—</span></div>
+      <div class="mstat"><span class="msl">Points</span><span class="msv" id="m-pts">—</span></div>
+    </div>
+    <div class="msec">
+      <div class="mlb">Rating</div>
+      <div class="spick-row">
+        <span class="spick" data-v="1">★</span><span class="spick" data-v="2">★</span>
+        <span class="spick" data-v="3">★</span><span class="spick" data-v="4">★</span><span class="spick" data-v="5">★</span>
+      </div>
+    </div>
+    <div class="msec">
+      <div class="mlb">Difficulty</div>
+      <div class="drow">
+        <button class="dbtn" onclick="setDiff('Easy',this)">Easy</button>
+        <button class="dbtn" onclick="setDiff('Medium',this)">Medium</button>
+        <button class="dbtn" onclick="setDiff('Hard',this)">Hard</button>
+      </div>
+    </div>
+    <button class="btn-sub" onclick="submitReview()">Submit →</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════
+const PID    = 'brmid';
+const COLS = 5, ROWS = 4, TOTAL = 20;
+const PW = 84, PH = 66;
+const TAB = 13;
+const M = Math.ceil(TAB * 1.8);
+const SNAP = 20;
+
+const STARRY  = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg';
+const CRYPTIC = 'cryptic.png';
+
+// ── ROUNDS ──────────────────────────────────────────────────────────────────
+// Each round has its own answer, hint set, code-bar explanation, and reveal clue.
+// Add more rounds here as the puzzle chain grows.
+const ROUNDS = [
+  {
+    answer: 'H2SO4',
+    hints: [
+      {text:'The kings shout. The servants whisper. Not all who are diminutive are unimportant.', cost:50},
+      {text:'Three are Greek but find those that caps lock forgot. Two live above the even numbers on every device you own. Read them as you would any page. What does an alchemist dream of?', cost:150},
+    ],
+    explain: 'Flip the pieces — it will give you another clue. Decipher and unlock.',
+    reveal:  'Well done. Round 2 awaits.',
+    maxAttempts: 10,
+  },
+  {
+    answer: 'venus',
+    caseInsensitive: true,
+    clue: 'A father\'s wound became the sea\'s secret. From the waters off the island of Cuprum, she was born whole. Van Gogh knew her. On the night he painted the village asleep, she did not sleep. She burned. The brightest in his sky.',
+    hints: [
+      {text:'She was there all along — in plain sight, above the horizon.', cost:50},
+      {text:'The brightest object in the night sky that is not the Moon.', cost:150},
+    ],
+    reveal:  'Well done. Round 3 awaits.',
+    maxAttempts: 10,
+  },
+  {
+    answer: 'SHUKRA',
+    caseInsensitive: true,
+    clue: 'Seen in the ledger of a spice trader, somewhere between Alexandria and Bharuch, circa 100 AD: Something traveled east that was not silk, not pepper, not gold. It had no weight. It could not be taxed. But the strangest thing — when the traders arrived at the Indus, it was already there. Waiting. Already named. The men of the East had watched the same wandering light and had arrived, alone, at the same truth. The one that never strays far from the sun. The one that burns at dusk and returns at dawn. Six cities lie between the two worlds that named it independently. Walk the road west to east, from the last Roman port to the first Chinese gate. Let the cities speak in order. What they spell is what it was always called, by those who saw it clearly.',
+    hints: [
+      {text:'The road speaks. But only in initials. And only if you walk it in the right direction.', cost:50},
+      {text:'The Kushans knew her. So did the Parthians. They called her by different names — but one name outlasted all empires. It was already old when this road was young.', cost:150},
+    ],
+    reveal:  'You have followed the light across three worlds. Now look up. The sky holds one more secret.',
+    maxAttempts: 10,
+  },
+  {
+    answer: '584399',
+    clue: 'He has always had a rival. They have circled the same sky since before the first temple was built. They do not speak to each other — but they have always watched the same sky from the same Earth.\n\nShukra completes his dance. His rival completes his.\n\nThe numbers were known to every astronomer who ever looked up without a telescope. The moves of his, and the moves of his rival\'s — placed side by side.',
+    hints: [
+      {text:'In the ancient sky, every wandering light had a rhythm — the number of days before it returned to the same position as seen from Earth. Watch the diagram.', cost:50},
+      {text:'Shukra\'s dance takes 584 days to complete. His rival\'s takes 399. Shukra goes first — as he always has.', cost:150},
+    ],
+    reveal:  'You have walked the road, named the stars, and counted the heavens. BRMID is complete.',
+    maxAttempts: 10,
+  },
+];
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let elapsed=0, timerIv=null;
+let points=1000;
+let hintsUsed=[], userRating=0, userDiff='';
+let solved=false, attempts=0;
+let flipped=false;
+let currentRound=0;
+let solvedRounds=[]; // {roundNum, answer, clue, snapshot(canvas)}
+
+let canvas, ctx, wrap;
+let sImg=null, cImg=null;
+
+/*
+ DATA MODEL — the simplest correct approach:
+ ─────────────────────────────────────────────
+ piece = {
+   idx, col, row,
+   tT, tR, tB, tL,    ← tab direction (±1) or 0 for edge
+   x, y,              ← absolute canvas position of piece top-left (the BASE rect, not the offscreen canvas)
+   front, back,       ← offscreen <canvas> elements, size (PW+2M)×(PH+2M); piece drawn at (M,M) inside
+   gid,               ← which group this piece belongs to (index into `groups`)
+   inTray,            ← boolean
+ }
+
+ groups = Array of Sets of piece-indices.
+   Index order = render order: groups[0] drawn first (bottom), groups[last] drawn last (top).
+   A piece's gid is always its current index in the groups array.
+
+ drag = {
+   gid,               ← index of group being dragged
+   startMx, startMy,  ← mouse position when drag started
+   origins,           ← Map<idx, {x,y}> — piece positions at drag start
+ } | null
+*/
+
+let pieces = [];   // indexed by idx 0..19
+let groups = [];   // Array<Set<number>> — render order
+let drag   = null;
+let traySet = new Set();
+
+// ══════════════════════════════════════════
+//  SILK ROAD MAP — round 3 (D3 + GeoJSON)
+// ══════════════════════════════════════════
+const SILK_CITIES = [
+  { answer:'siraf',      letter:'S', dotId:'mdot-0', labelId:'mlabel-0', lat:'27.66°N', lng:'52.35°E', coord:[52.35, 27.66] },
+  { answer:'hormuz',     letter:'H', dotId:'mdot-1', labelId:'mlabel-1', lat:'27.06°N', lng:'56.46°E', coord:[56.46, 27.06] },
+  { answer:'urgench',    letter:'U', dotId:'mdot-2', labelId:'mlabel-2', lat:'41.53°N', lng:'60.62°E', coord:[60.62, 41.53] },
+  { answer:'rawalpindi', letter:'K', dotId:'mdot-3', labelId:'mlabel-3', lat:'33.58°N', lng:'73.07°E', coord:[73.07, 33.58] },
+  { answer:'kashgar',    letter:'R', dotId:'mdot-4', labelId:'mlabel-4', lat:'39.47°N', lng:'75.99°E', coord:[75.99, 39.47] },
+  { answer:'anxi',       letter:'A', dotId:'mdot-5', labelId:'mlabel-5', lat:'40.06°N', lng:'95.94°E', coord:[95.94, 40.06] },
+];
+const citySolved = new Array(SILK_CITIES.length).fill(false);
+let cityActiveIdx = null;
+let silkMapReady  = false;
+let silkProjection = null;
+
+async function initSilkMap(){
+  if(silkMapReady) return;
+  silkMapReady = true;
+
+  const mn = document.getElementById('map-notes');
+  const sv = localStorage.getItem('notes:'+PID+':map');
+  if(sv) mn.value = sv;
+  mn.addEventListener('input', () => localStorage.setItem('notes:'+PID+':map', mn.value));
+
+  const svgEl = document.getElementById('silk-map-svg');
+  const W = svgEl.clientWidth || 700;
+  const H = Math.round(W * 0.54);
+  svgEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svgEl.setAttribute('height', H);
+
+  const projection = d3.geoMercator().center([68,34]).scale(W*0.73).translate([W/2,H/2]);
+  silkProjection = projection;
+  const pathGen = d3.geoPath().projection(projection);
+  const svg = d3.select('#silk-map-svg');
+
+  // Country colours
+  const CC = {
+    '356':'#e8e0d0','586':'#e4dccb','004':'#e2d9c8','364':'#e6ddd0',
+    '368':'#e8e2d4','156':'#e5ddd0','398':'#ecead8','860':'#eae5d5',
+    '795':'#e8e2d2','762':'#e4dbc8','417':'#ece8d8','682':'#ece5d0',
+    '512':'#e8e2d0','784':'#eae4d2','792':'#eceada','051':'#e8e3d5',
+    '031':'#e6e0d2','268':'#eceada','760':'#e8e2d4','400':'#eae4d8',
+    '422':'#e8e2d4','275':'#eae4d8',
+  };
+
+  let world = null;
+  try {
+    const res = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+    const topo = await res.json();
+    world = topojson.feature(topo, topo.objects.countries);
+  } catch(e){ console.warn('GeoJSON failed',e); }
+
+  if(world){
+    svg.append('g').attr('class','countries')
+      .selectAll('path').data(world.features).enter().append('path')
+      .attr('d', pathGen)
+      .attr('fill', d => CC[d.id]||'#ede8df')
+      .attr('stroke','#b0a090').attr('stroke-width',0.6);
+
+    // ── INDIA BORDER CORRECTION (Government of India definition) ──
+    // world-atlas uses ICAO/UN data which marks J&K as disputed.
+    // We overlay the full Indian claim: J&K, PoK, Gilgit-Baltistan, Aksai Chin.
+    // Coordinates are approximate but geographically faithful to GoI maps.
+    const indiaClaim = {type:'Feature',geometry:{type:'Polygon',coordinates:[[
+      // SW entry near Pathankot / Punjab border
+      [75.20,32.08],
+      // PoK — moving north along the Jhelum / Line of Control
+      [74.65,32.20],[74.08,32.42],[73.92,32.72],[73.74,33.14],
+      [73.56,33.52],[73.62,33.88],[73.82,34.22],[73.90,34.72],
+      // Gilgit-Baltistan
+      [74.08,35.28],[74.32,35.78],[74.68,36.22],[75.10,36.62],
+      [75.60,36.92],[76.18,37.14],[76.82,37.40],
+      // Northern tip (Karakoram Pass area, China border)
+      [77.42,37.05],[77.90,36.80],[78.52,36.35],
+      // Aksai Chin — India claims this region (currently administered by China)
+      [79.08,35.52],[79.50,35.00],[79.88,34.68],
+      [80.50,34.45],[81.20,34.55],[82.10,34.42],
+      [82.72,34.12],[83.18,33.85],
+      // Moving south back to Uttarakhand / Himachal border
+      [82.50,33.20],[80.80,32.80],[79.50,32.55],
+      [78.80,32.30],[78.00,32.10],[77.20,31.82],
+      [76.70,31.90],[76.20,32.00],[75.80,32.04],[75.20,32.08]
+    ]]}};
+    svg.append('path').datum(indiaClaim).attr('d',pathGen)
+      .attr('fill','#e8e0d0').attr('stroke','#b0a090').attr('stroke-width',0.6);
+
+    // Line of Control (LoC) — dotted boundary between India and Pakistan administered areas
+    const loc = {type:'Feature',geometry:{type:'LineString',coordinates:[
+      [75.20,32.08],[74.65,32.20],[74.08,32.42],[73.92,32.72],
+      [73.74,33.14],[73.56,33.52],[73.62,33.88],[73.82,34.22],
+      [73.90,34.72],[74.08,35.28]
+    ]}};
+    svg.append('path').datum(loc).attr('d',pathGen)
+      .attr('fill','none').attr('stroke','#888070')
+      .attr('stroke-width',0.9).attr('stroke-dasharray','3,3');
+
+    // LAC (Line of Actual Control) — India/China boundary in Aksai Chin
+    const lac = {type:'Feature',geometry:{type:'LineString',coordinates:[
+      [78.52,36.35],[79.08,35.52],[79.88,34.68],[80.50,34.45],
+      [81.20,34.55],[82.10,34.42],[82.72,34.12],[83.18,33.85]
+    ]}};
+    svg.append('path').datum(lac).attr('d',pathGen)
+      .attr('fill','none').attr('stroke','#888070')
+      .attr('stroke-width',0.9).attr('stroke-dasharray','4,3');
+  }
+
+  // Mountain ranges with zigzag ridges
+  const MTS = [
+    {name:'Zagros',     lc:[46.5,33],  path:[[44,37],[46,33],[48,29]]},
+    {name:'Elburz',     lc:[53,36.8],  path:[[49,37],[53,36.5],[58,37]]},
+    {name:'Hindu Kush', lc:[68.5,36],  path:[[65,34],[68,35.5],[72,36]]},
+    {name:'Karakoram',  lc:[76,36.2],  path:[[72,36],[74.5,36.5],[78.5,36]]},
+    {name:'Himalayas',  lc:[83,30.5],  path:[[78.5,36],[82,32],[85,29],[88,27.5]]},
+    {name:'Tian Shan',  lc:[77,42],    path:[[70,43],[78,42],[86,42]]},
+    {name:'Kunlun',     lc:[84,36.5],  path:[[78,36],[83,36.5],[90,37]]},
+    {name:'Pamirs',     lc:[73.5,38.5],path:[[70,39],[73,38],[74,37]]},
+    {name:'Caucasus',   lc:[44,43],    path:[[40,43],[44,42.5],[50,43.5]]},
+  ];
+  const mtG = svg.append('g').attr('class','mountains');
+  MTS.forEach(mr => {
+    const pts = mr.path.map(c=>projection(c)).filter(Boolean);
+    for(let i=0;i<pts.length-1;i++){
+      const [x1,y1]=pts[i],[x2,y2]=pts[i+1];
+      const dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
+      const steps=Math.max(3,Math.floor(len/7));
+      let d='';
+      for(let s=0;s<=steps;s++){
+        const t=s/steps,mx=x1+dx*t,my=y1+dy*t;
+        const p=s%2===0?3:-3,nx=-dy/len*p,ny=dx/len*p;
+        d+=(s===0?'M':'L')+(mx+nx).toFixed(1)+','+(my+ny).toFixed(1)+' ';
+      }
+      mtG.append('path').attr('d',d).attr('fill','none').attr('stroke','#9a8878').attr('stroke-width',1).attr('stroke-linecap','round').attr('opacity',0.7);
+    }
+    const lp=projection(mr.lc);
+    if(lp) mtG.append('text').attr('x',lp[0]).attr('y',lp[1]).attr('text-anchor','middle')
+      .attr('font-family',"'Instrument Sans',sans-serif").attr('font-size',6.5).attr('font-style','italic')
+      .attr('fill','#7a6858').attr('opacity',0.7).attr('pointer-events','none').text(mr.name);
+  });
+
+  // Water labels
+  [{name:'Persian Gulf',c:[51.2,26.2],s:7.5},{name:'Caspian Sea',c:[51.5,42],s:7.5},
+   {name:'Arabian Sea',c:[62,18],s:8},{name:'Red Sea',c:[34.5,22],s:7},
+   {name:'Gulf of Oman',c:[57.5,23],s:6.5},{name:'Aral Sea',c:[60,45],s:7}]
+  .forEach(wl => {
+    const p=projection(wl.c);
+    if(!p||p[0]<0||p[0]>W||p[1]<0||p[1]>H) return;
+    svg.append('text').attr('x',p[0]).attr('y',p[1]).attr('text-anchor','middle')
+      .attr('font-family',"'Playfair Display',serif").attr('font-style','italic')
+      .attr('font-size',wl.s).attr('fill','#3a6080').attr('opacity',0.8).attr('pointer-events','none').text(wl.name);
+  });
+
+  // Country labels
+  [{n:'IRAN',c:[53.5,32],s:9},{n:'IRAQ',c:[43.5,33],s:8},{n:'SAUDI ARABIA',c:[44,24.5],s:8},
+   {n:'AFGHANISTAN',c:[66,33.5],s:8},{n:'PAKISTAN',c:[69.5,29.5],s:8},
+   {n:'UZBEKISTAN',c:[62,41],s:7.5},{n:'TURKMENISTAN',c:[57,39],s:7},
+   {n:'KAZAKHSTAN',c:[67,47],s:8},{n:'CHINA',c:[90,37],s:9},{n:'INDIA',c:[78,22],s:9},
+   {n:'TURKEY',c:[35,39],s:8},{n:'OMAN',c:[57.5,22],s:7.5},
+   {n:'TAJIKISTAN',c:[70,38.5],s:6.5},{n:'KYRGYZSTAN',c:[74.5,41.5],s:6.5},
+   {n:'SYRIA',c:[38,35],s:7},{n:'GEORGIA',c:[44,42.2],s:6.5},{n:'AZERBAIJAN',c:[48,40.5],s:6.5}]
+  .forEach(cl => {
+    const p=projection(cl.c);
+    if(!p||p[0]<0||p[0]>W||p[1]<0||p[1]>H) return;
+    svg.append('text').attr('x',p[0]).attr('y',p[1]).attr('text-anchor','middle')
+      .attr('font-family',"'Instrument Sans',sans-serif").attr('font-size',cl.s).attr('font-weight',600)
+      .attr('fill','#5a4a3a').attr('opacity',0.6).attr('letter-spacing',1).attr('pointer-events','none').text(cl.n);
+  });
+
+  // ── EMPIRE TERRITORIES circa 100 AD ─────────────────────────
+  // Draw shaded polygons for each empire, then label them
+  const EMPIRES = [
+    {
+      name:'Roman Empire',
+      col:'#c8a878', opacity:0.13,
+      // Western edge of our map — just the easternmost reach near Syria/Arabia
+      poly:[[36,37],[42,37],[44,35],[43,33],[40,31],[36,31],[33,34],[36,37]]
+    },
+    {
+      name:'Parthian Empire',
+      col:'#c87840', opacity:0.15,
+      // Modern Iran + Iraq + part of Arabian coast
+      poly:[[42,37],[58,38],[62,36],[62,32],[58,28],[52,24],[44,25],[40,31],[43,33],[44,35],[42,37]]
+    },
+    {
+      name:'Kushan Empire',
+      col:'#78a850', opacity:0.13,
+      // Afghanistan, Pakistan, NW India, parts of Central Asia up to Aral Sea
+      poly:[[58,38],[68,44],[72,44],[76,40],[80,36],[78,32],[72,28],[66,28],[60,30],[58,34],[62,36],[58,38]]
+    },
+    {
+      name:'Han Dynasty',
+      col:'#8868a8', opacity:0.13,
+      // Western China — Tarim Basin and beyond
+      poly:[[80,44],[90,46],[100,42],[100,36],[96,32],[88,32],[80,36],[76,40],[80,44]]
+    },
+    {
+      name:'Satavahana Kingdom',
+      col:'#a07840', opacity:0.11,
+      // Central / South India
+      poly:[[72,22],[80,22],[84,18],[82,14],[76,12],[70,14],[68,18],[72,22]]
+    },
+  ];
+
+  // Draw empire fills first (behind everything)
+  const empireG = svg.insert('g',':first-child').attr('class','empire-fills');
+  EMPIRES.forEach(emp => {
+    const feature = {type:'Feature',geometry:{type:'Polygon',coordinates:[emp.poly]}};
+    empireG.append('path').datum(feature).attr('d',pathGen)
+      .attr('fill',emp.col).attr('opacity',emp.opacity).attr('stroke','none');
+  });
+
+  // Empire name labels (italic, coloured, subtle)
+  const empLabelG = svg.append('g').attr('class','empire-labels');
+  const empLabelPos = [
+    {name:'Roman Empire',    c:[39,34],   col:'#8a6030'},
+    {name:'Parthian Empire', c:[52,33],   col:'#9a5020'},
+    {name:'Kushan Empire',   c:[68,37],   col:'#4a7830'},
+    {name:'Han Dynasty',     c:[91,40],   col:'#5a4880'},
+    {name:'Satavahana\nKingdom', c:[76,17.5], col:'#705030'},
+  ];
+  empLabelPos.forEach(el => {
+    const p = projection(el.c);
+    if(!p||p[0]<0||p[0]>W||p[1]<0||p[1]>H) return;
+    const lines = el.name.split('\n');
+    lines.forEach((line,i) => {
+      empLabelG.append('text')
+        .attr('x',p[0]).attr('y',p[1]+i*10)
+        .attr('text-anchor','middle')
+        .attr('font-family',"'Playfair Display',serif")
+        .attr('font-style','italic')
+        .attr('font-size',8)
+        .attr('fill',el.col)
+        .attr('opacity',0.7)
+        .attr('pointer-events','none')
+        .text(line);
+    });
+  });
+
+  // Silk route line connecting the 6 cities
+  const rf = {type:'Feature',geometry:{type:'LineString',coordinates:SILK_CITIES.map(c=>c.coord)}};
+  svg.append('path').datum(rf).attr('d',pathGen).attr('fill','none')
+    .attr('stroke','#d95f0a').attr('stroke-width',2).attr('stroke-dasharray','7,5').attr('opacity',0.85);
+
+  // City dots
+  const tooltip = document.getElementById('map-tooltip');
+  const cityG = svg.append('g').attr('class','cities');
+  SILK_CITIES.forEach((city,idx) => {
+    const pos=projection(city.coord);
+    if(!pos) return;
+    const g = cityG.append('g').attr('id',city.dotId).attr('cursor','pointer');
+    const ring = g.append('circle').attr('id','mring-'+idx)
+      .attr('cx',pos[0]).attr('cy',pos[1]).attr('r',14).attr('fill','#d95f0a').attr('opacity',0);
+    g.append('circle').attr('id','minner-'+idx)
+      .attr('cx',pos[0]).attr('cy',pos[1]).attr('r',6)
+      .attr('fill','#d95f0a').attr('stroke','#2a1f0e').attr('stroke-width',1.8);
+    const lbl = g.append('g').attr('id',city.labelId).style('opacity',0).style('transition','opacity .5s');
+    lbl.append('rect').attr('x',pos[0]-2).attr('y',pos[1]-23).attr('width',62).attr('height',15)
+      .attr('fill','rgba(255,255,255,0.82)').attr('rx',2);
+    lbl.append('text').attr('x',pos[0]).attr('y',pos[1]-11)
+      .attr('font-family',"'Playfair Display',serif").attr('font-style','italic').attr('font-weight',700)
+      .attr('font-size',13).attr('fill','#d95f0a').text(city.letter);
+    lbl.append('text').attr('x',pos[0]+9).attr('y',pos[1]-11)
+      .attr('font-family',"'Instrument Sans',sans-serif").attr('font-weight',500)
+      .attr('font-size',10).attr('fill','#383430').text(city.answer.slice(1));
+
+    g.on('mouseenter',e=>{
+      if(citySolved[idx])return;
+      ring.attr('opacity',0.22);
+      tooltip.textContent=city.lat+'  '+city.lng;
+      tooltip.style.display='block';
+    }).on('mousemove',e=>{
+      tooltip.style.left=(e.clientX+14)+'px';
+      tooltip.style.top=(e.clientY-28)+'px';
+    }).on('mouseleave',()=>{
+      if(citySolved[idx])return;
+      ring.attr('opacity',0);
+      tooltip.style.display='none';
+    }).on('click',e=>{
+      e.stopPropagation();
+      if(citySolved[idx])return;
+      tooltip.style.display='none';
+      openCityPopupAtPos(idx,pos[0],pos[1]);
+    });
+  });
+
+  // Compass rose
+  const crx=36,cry=H-40;
+  [[crx,cry-16,crx,cry+16],[crx-16,cry,crx+16,cry]].forEach(l=>{
+    svg.append('line').attr('x1',l[0]).attr('y1',l[1]).attr('x2',l[2]).attr('y2',l[3])
+      .attr('stroke','#6a5a4a').attr('stroke-width',1).attr('opacity',0.6);
+  });
+  svg.append('polygon').attr('points',`${crx},${cry-16} ${crx-3},${cry-7} ${crx+3},${cry-7}`)
+    .attr('fill','#6a5a4a').attr('opacity',0.6);
+  [{t:'N',dx:0,dy:-22},{t:'S',dx:0,dy:26},{t:'E',dx:20,dy:4},{t:'W',dx:-20,dy:4}].forEach(d=>{
+    svg.append('text').attr('x',crx+d.dx).attr('y',cry+d.dy).attr('text-anchor','middle')
+      .attr('font-family',"'Instrument Sans',sans-serif").attr('font-size',8).attr('font-weight',600)
+      .attr('fill','#6a5a4a').attr('opacity',0.6).text(d.t);
+  });
+
+  // Era badge
+  svg.append('rect').attr('x',W-128).attr('y',H-50).attr('width',120).attr('height',42)
+    .attr('rx',3).attr('fill','rgba(244,238,220,0.92)').attr('stroke','#9a8a6a').attr('stroke-width',1);
+  svg.append('text').attr('x',W-68).attr('y',H-34).attr('text-anchor','middle')
+    .attr('font-family',"'Instrument Sans',sans-serif").attr('font-size',7).attr('font-weight',600)
+    .attr('letter-spacing',1.2).attr('fill','#6a5a4a').attr('opacity',0.8).text('THE REGION');
+  svg.append('text').attr('x',W-68).attr('y',H-18).attr('text-anchor','middle')
+    .attr('font-family',"'Playfair Display',serif").attr('font-style','italic')
+    .attr('font-size',13).attr('fill','#2a1f0e').text('circa 100 AD');
+
+  svgEl.addEventListener('click',()=>closeCityPopup());
+}
+
+function openCityPopupAtPos(idx, svgX, svgY){
+  cityActiveIdx = idx;
+  const popup  = document.getElementById('city-popup');
+  const pinput = document.getElementById('city-popup-input');
+  pinput.value = '';
+  pinput.classList.remove('err');
+  popup.style.display = 'block';
+
+  // Convert SVG coords to screen coords
+  const svgEl = document.getElementById('silk-map-svg');
+  const rect  = svgEl.getBoundingClientRect();
+  const vb    = svgEl.viewBox.baseVal;
+  const scaleX = rect.width  / (vb.width  || rect.width);
+  const scaleY = rect.height / (vb.height || rect.height);
+  const screenX = rect.left + svgX * scaleX;
+  const screenY = rect.top  + svgY * scaleY;
+
+  const pw = 220, ph = 115, vw = window.innerWidth, vh = window.innerHeight;
+  let left = screenX + 16;
+  let top  = screenY - 20;
+  if(left + pw > vw - 10) left = screenX - pw - 16;
+  if(top  + ph > vh - 10) top  = vh - ph - 10;
+  if(top < 66) top = 66;
+  popup.style.left = left + 'px';
+  popup.style.top  = top  + 'px';
+  setTimeout(() => pinput.focus(), 30);
+}
+
+function openCityPopup(idx, dotEl){
+  // fallback wrapper — not used in D3 path
+  openCityPopupAtPos(idx, 0, 0);
+}
+
+function closeCityPopup(){
+  document.getElementById('city-popup').style.display = 'none';
+  cityActiveIdx = null;
+}
+
+function submitCityAnswer(){
+  if(cityActiveIdx === null) return;
+  const pinput = document.getElementById('city-popup-input');
+  const val    = pinput.value.trim().toLowerCase();
+  const city   = SILK_CITIES[cityActiveIdx];
+
+  if(val === city.answer){
+    citySolved[cityActiveIdx] = true;
+
+    // Update dot — hollow orange
+    d3.select('#minner-'+cityActiveIdx).attr('fill','#fff').attr('stroke','#d95f0a').attr('r', 7);
+    d3.select('#mring-'+cityActiveIdx).attr('opacity', 0.18);
+
+    // Reveal city label on map
+    d3.select('#'+city.labelId).style('opacity','1');
+
+    // Hide tooltip
+    document.getElementById('map-tooltip').style.display = 'none';
+
+    closeCityPopup();
+
+    if(citySolved.every(Boolean)){
+      setTimeout(() => {
+        const fw = document.getElementById('map-final-wrap');
+        fw.style.display = 'flex';
+        setTimeout(() => document.getElementById('map-final-input').focus(), 100);
+      }, 400);
+    }
+  } else {
+    // Silent fail — shake and clear
+    pinput.classList.add('err');
+    setTimeout(() => { pinput.classList.remove('err'); pinput.value = ''; pinput.focus(); }, 350);
+  }
+}
+
+document.getElementById('city-popup-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter')  submitCityAnswer();
+  if(e.key === 'Escape') closeCityPopup();
+});
+
+// ══════════════════════════════════════════
+//  ORRERY — round 4 geocentric diagram
+// ══════════════════════════════════════════
+let orreryReady = false;
+let orreryAnim  = null;
+
+function initOrrery(){
+  if(orreryReady) return;
+  orreryReady = true;
+
+  // Notes
+  const on = document.getElementById('orrery-notes');
+  const osv = localStorage.getItem('notes:'+PID+':orrery');
+  if(osv) on.value = osv;
+  on.addEventListener('input', () => localStorage.setItem('notes:'+PID+':orrery', on.value));
+
+  // Enter key
+  document.getElementById('orrery-input').addEventListener('keydown', e => {
+    if(e.key === 'Enter') checkOrreryCode();
+  });
+
+  drawOrrery();
+}
+
+function drawOrrery(){
+  const svgEl = document.getElementById('orrery-svg');
+  const svg   = d3.select('#orrery-svg');
+  const W = 420, H = 420, cx = W/2, cy = H/2;
+
+  // Background — deep dark sky
+  svg.append('rect').attr('width',W).attr('height',H).attr('fill','#0e0e1a');
+
+  // Star field
+  for(let i=0;i<120;i++){
+    const x=Math.random()*W, y=Math.random()*H, r=Math.random()*1.2+0.2;
+    svg.append('circle').attr('cx',x).attr('cy',y).attr('r',r)
+      .attr('fill','#fff').attr('opacity',Math.random()*0.6+0.15);
+  }
+
+  // Orbit rings
+  const orbitData = [
+    { name:'Moon',      r:38,  col:'#b0b0c0', dash:'none' },
+    { name:'Mercury',   r:62,  col:'#8a8a7a', dash:'4,3'  },
+    { name:'Venus',     r:90,  col:'#e8c840', dash:'none' },
+    { name:'Sun',       r:0,   col:null,       dash:'none' }, // centre
+    { name:'Mars',      r:122, col:'#c86040', dash:'4,3'  },
+    { name:'Jupiter',   r:158, col:'#c8a060', dash:'none' },
+    { name:'Saturn',    r:192, col:'#b8a870', dash:'4,3'  },
+  ];
+
+  // Draw orbit circles
+  orbitData.forEach(od => {
+    if(od.r === 0) return;
+    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',od.r)
+      .attr('fill','none').attr('stroke',od.col).attr('stroke-width',0.4)
+      .attr('opacity',0.25)
+      .attr('stroke-dasharray', od.dash === 'none' ? null : od.dash);
+  });
+
+  // Earth at centre — small blue dot
+  svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',7)
+    .attr('fill','#3a7ac8').attr('stroke','#5a9ae8').attr('stroke-width',0.8);
+  svg.append('text').attr('x',cx).attr('y',cy+16)
+    .attr('text-anchor','middle').attr('font-family',"'Instrument Sans',sans-serif")
+    .attr('font-size',8).attr('fill','#6a8ab8').attr('opacity',0.8).text('Earth');
+
+  // Planet definitions with real synodic periods (days)
+  // Angular speed = 360 / synodic_period degrees per day
+  const planets = [
+    { name:'Moon',     r:38,  col:'#c8c8d8', size:4,  speed:360/29.5,   start:45  },
+    { name:'Mercury',  r:62,  col:'#a0a090', size:3,  speed:360/115.9,  start:120 },
+    { name:'Venus',    r:90,  col:'#e8c840', size:5,  speed:360/583.9,  start:200 },
+    { name:'Sun',      r:118, col:'#f8d060', size:9,  speed:360/365.25, start:0   },
+    { name:'Mars',     r:148, col:'#d86040', size:4,  speed:360/779.9,  start:280 },
+    { name:'Jupiter',  r:178, col:'#c8a060', size:6,  speed:360/398.9,  start:320 },
+    { name:'Saturn',   r:200, col:'#c8b870', size:5,  speed:360/378.1,  start:150 },
+  ];
+
+  // Create planet groups
+  const planetGs = planets.map(p => {
+    const g = svg.append('g').attr('id','op-'+p.name.toLowerCase());
+
+    // Glow
+    g.append('circle').attr('r', p.size+3)
+      .attr('fill',p.col).attr('opacity',0.15);
+
+    // Planet dot
+    g.append('circle').attr('r', p.size)
+      .attr('fill', p.col)
+      .attr('stroke','rgba(255,255,255,0.2)').attr('stroke-width',0.5);
+
+    // Label — only for Venus and Jupiter (the key ones)
+    if(p.name === 'Venus' || p.name === 'Jupiter' || p.name === 'Sun'){
+      g.append('text')
+        .attr('y', -(p.size+5))
+        .attr('text-anchor','middle')
+        .attr('font-family',"'Instrument Sans',sans-serif")
+        .attr('font-size', p.name==='Sun'?9:8)
+        .attr('font-weight', 600)
+        .attr('fill', p.col)
+        .attr('opacity', 0.9)
+        .text(p.name === 'Venus' ? 'Shukra' : p.name === 'Jupiter' ? '?' : 'Sūrya');
+    }
+    return { el:g, ...p };
+  });
+
+  // Synodic period labels on the orrery itself
+  // Venus label with period arc annotation
+  const vPos = {x: cx + 90*Math.cos(-0.8), y: cy + 90*Math.sin(-0.8)};
+  svg.append('text').attr('x', cx+42).attr('y', cy-78)
+    .attr('text-anchor','middle')
+    .attr('font-family',"'Playfair Display',serif").attr('font-style','italic')
+    .attr('font-size',9).attr('fill','#e8c840').attr('opacity',0.75)
+    .text('584 days');
+  svg.append('text').attr('x', cx+10).attr('y', cy+170)
+    .attr('text-anchor','middle')
+    .attr('font-family',"'Playfair Display',serif").attr('font-style','italic')
+    .attr('font-size',9).attr('fill','#c8a060').attr('opacity',0.75)
+    .text('399 days');
+
+  // Synodic period indicator lines from orbit labels to orbit rings
+  svg.append('line').attr('x1',cx+42).attr('y1',cy-75).attr('x2',cx+68).attr('y2',cy-60)
+    .attr('stroke','#e8c840').attr('stroke-width',0.4).attr('opacity',0.4);
+  svg.append('line').attr('x1',cx+10).attr('y1',cy+165).attr('x2',cx+10).attr('y2',cy+178)
+    .attr('stroke','#c8a060').attr('stroke-width',0.4).attr('opacity',0.4);
+
+  // Animation — simulate geocentric orbits at accelerated speed
+  let t = 0;
+  const SPEED = 0.8; // days per frame
+
+  function tick(){
+    t += SPEED;
+    planetGs.forEach(p => {
+      const ang = (p.start + p.speed * t) * Math.PI / 180;
+      const x = cx + p.r * Math.cos(ang);
+      const y = cy + p.r * Math.sin(ang);
+      p.el.attr('transform', `translate(${x},${y})`);
+    });
+    orreryAnim = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+function stopOrrery(){
+  if(orreryAnim){ cancelAnimationFrame(orreryAnim); orreryAnim = null; }
+}
+
+function checkOrreryCode(){
+  const r = ROUNDS[currentRound];
+  if(solved || attempts >= r.maxAttempts) return;
+  const inp = document.getElementById('orrery-input');
+  const fb  = document.getElementById('orrery-fb');
+  const val = inp.value.trim();
+  if(!val){ fb.textContent='Enter the code.'; fb.className='cb-fb hint'; return; }
+  const dots = document.querySelectorAll('#orrery-adots .adot');
+  attempts++;
+  if(val === r.answer){
+    solved = true;
+    stopTimer();
+    inp.classList.add('ok'); inp.disabled = true;
+    document.querySelector('#screen-orrery .btn-unlock').disabled = true;
+    fb.textContent = '✦ Correct!'; fb.className = 'cb-fb ok2';
+    const rev = document.getElementById('orrery-reveal');
+    rev.textContent = r.reveal; rev.style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('m-time').textContent = fmt(elapsed);
+      document.getElementById('m-pts').textContent  = points;
+      document.getElementById('rating-modal').classList.add('open');
+    }, 1500);
+  } else {
+    if(dots[attempts-1]) dots[attempts-1].classList.add('wrong');
+    inp.classList.add('err'); setTimeout(() => inp.classList.remove('err'), 400);
+    inp.value = '';
+    const left = r.maxAttempts - attempts;
+    if(left === 0){
+      fb.textContent = 'No attempts left.'; fb.className = 'cb-fb err';
+      inp.disabled = true; document.querySelector('#screen-orrery .btn-unlock').disabled = true;
+    } else {
+      fb.textContent = `Not quite — ${left} attempt${left>1?'s':''} left.`; fb.className = 'cb-fb err';
+    }
+  }
+}
+
+function toggleMapClue(){
+  const txt = document.getElementById('map-clue-text');
+  const btn = document.getElementById('map-clue-toggle');
+  const hidden = txt.style.display === 'none';
+  txt.style.display = hidden ? '' : 'none';
+  btn.textContent = hidden ? '▲ Hide clue' : '▼ Show clue';
+}
+
+function submitMapFinalAnswer(){
+  const inp = document.getElementById('map-final-input');
+  const fb  = document.getElementById('map-final-fb');
+  const val = inp.value.trim();
+  if(!val) return;
+  const r = ROUNDS[currentRound];
+  const match = val.toLowerCase() === r.answer.toLowerCase();
+  if(match){
+    inp.style.borderColor = '#27ae60';
+    inp.disabled = true;
+    fb.textContent = '✦ Correct!';
+    fb.style.color = '#27ae60';
+    solved = true;
+    setTimeout(() => nextRound(), 1000);
+  } else {
+    inp.style.borderColor = '#c0392b';
+    fb.textContent = 'Not quite — try again.';
+    fb.style.color = '#c0392b';
+    setTimeout(() => {
+      inp.style.borderColor = '';
+      fb.textContent = '';
+      inp.value = '';
+      inp.focus();
+    }, 1200);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const fi = document.getElementById('map-final-input');
+  if(fi) fi.addEventListener('keydown', e => { if(e.key==='Enter') submitMapFinalAnswer(); });
+});
+document.addEventListener('click', e => {
+  const popup = document.getElementById('city-popup');
+  if(popup.style.display === 'block' && !popup.contains(e.target) && !e.target.closest('.city-dot-g'))
+    closeCityPopup();
+});
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function switchTab(name,el){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('pane-'+name).classList.add('on');
+}
+
+// ══════════════════════════════════════════
+//  TIMER
+// ══════════════════════════════════════════
+function fmt(s){return`${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;}
+function startTimer(){
+  const el=document.getElementById('nav-timer');
+  el.style.display='block';
+  timerIv=setInterval(()=>{elapsed++;el.textContent=fmt(elapsed);},1000);
+}
+function stopTimer(){clearInterval(timerIv);}
+
+// ══════════════════════════════════════════
+//  TAB CONNECTORS
+// ══════════════════════════════════════════
+let hTab=[], vTab=[];  // hTab[r][c]=±1, vTab[r][c]=±1
+function buildConnectors(){
+  hTab=Array.from({length:ROWS},()=>Array.from({length:COLS-1},()=>Math.random()<.5?1:-1));
+  vTab=Array.from({length:ROWS-1},()=>Array.from({length:COLS},()=>Math.random()<.5?1:-1));
+}
+function tabsFor(r,c){
+  return {
+    tT: r===0       ? 0 : -vTab[r-1][c],
+    tB: r===ROWS-1  ? 0 :  vTab[r][c],
+    tL: c===0       ? 0 : -hTab[r][c-1],
+    tR: c===COLS-1  ? 0 :  hTab[r][c],
+  };
+}
+
+// ══════════════════════════════════════════
+//  PIECE PATH
+// ══════════════════════════════════════════
+function tracePath(c2, ox, oy, tT, tR, tB, tL){
+  const w=PW, h=PH, t=TAB;
+  c2.beginPath(); c2.moveTo(ox,oy);
+  // TOP →
+  if(tT){c2.lineTo(ox+w*.3,oy);c2.bezierCurveTo(ox+w*.3,oy-t*tT,ox+w*.45,oy-t*tT*1.5,ox+w*.5,oy-t*tT*1.5);c2.bezierCurveTo(ox+w*.55,oy-t*tT*1.5,ox+w*.7,oy-t*tT,ox+w*.7,oy);c2.lineTo(ox+w,oy);}
+  else c2.lineTo(ox+w,oy);
+  // RIGHT ↓
+  if(tR){c2.lineTo(ox+w,oy+h*.3);c2.bezierCurveTo(ox+w+t*tR,oy+h*.3,ox+w+t*tR*1.5,oy+h*.45,ox+w+t*tR*1.5,oy+h*.5);c2.bezierCurveTo(ox+w+t*tR*1.5,oy+h*.55,ox+w+t*tR,oy+h*.7,ox+w,oy+h*.7);c2.lineTo(ox+w,oy+h);}
+  else c2.lineTo(ox+w,oy+h);
+  // BOTTOM ←
+  if(tB){c2.lineTo(ox+w*.7,oy+h);c2.bezierCurveTo(ox+w*.7,oy+h+t*tB,ox+w*.55,oy+h+t*tB*1.5,ox+w*.5,oy+h+t*tB*1.5);c2.bezierCurveTo(ox+w*.45,oy+h+t*tB*1.5,ox+w*.3,oy+h+t*tB,ox+w*.3,oy+h);c2.lineTo(ox,oy+h);}
+  else c2.lineTo(ox,oy+h);
+  // LEFT ↑
+  if(tL){c2.lineTo(ox,oy+h*.7);c2.bezierCurveTo(ox-t*tL,oy+h*.7,ox-t*tL*1.5,oy+h*.55,ox-t*tL*1.5,oy+h*.5);c2.bezierCurveTo(ox-t*tL*1.5,oy+h*.45,ox-t*tL,oy+h*.3,ox,oy+h*.3);c2.lineTo(ox,oy);}
+  else c2.lineTo(ox,oy);
+  c2.closePath();
+}
+
+// ══════════════════════════════════════════
+//  OFFSCREEN CANVAS PER PIECE
+// ══════════════════════════════════════════
+function makeFace(p, imgSrc, dark){
+  const cw=PW+M*2, ch=PH+M*2;
+  const oc=document.createElement('canvas');
+  oc.width=cw; oc.height=ch;
+  const c2=oc.getContext('2d');
+  tracePath(c2,M,M,p.tT,p.tR,p.tB,p.tL);
+  c2.save(); c2.clip();
+  if(imgSrc && imgSrc.naturalWidth>0){
+    const sw=imgSrc.naturalWidth/COLS, sh=imgSrc.naturalHeight/ROWS;
+    c2.drawImage(imgSrc, p.col*sw-M, p.row*sh-M, sw+M*2, sh+M*2, 0, 0, cw, ch);
+    if(dark){c2.fillStyle='rgba(0,0,0,.45)';c2.fillRect(0,0,cw,ch);}
+  } else {
+    c2.fillStyle=`hsl(${p.idx*18},25%,${dark?55:75}%)`; c2.fillRect(0,0,cw,ch);
+    c2.fillStyle='rgba(255,255,255,.5)'; c2.font=`bold ${Math.min(PW,PH)*.3}px sans-serif`;
+    c2.textAlign='center'; c2.textBaseline='middle'; c2.fillText(p.idx+1,cw/2,ch/2);
+  }
+  c2.restore();
+  tracePath(c2,M,M,p.tT,p.tR,p.tB,p.tL);
+  c2.strokeStyle=dark?'rgba(217,95,10,.4)':'rgba(0,0,0,.6)';
+  c2.lineWidth=1; c2.stroke();
+  return oc;
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+function initPieces(){
+  buildConnectors();
+  pieces=[]; groups=[]; traySet=new Set();
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const idx=r*COLS+c;
+      const p={idx,col:c,row:r,...tabsFor(r,c),x:0,y:0,gid:groups.length,inTray:true};
+      p.front=makeFace(p,sImg,false);
+      p.back =makeFace(p,cImg,true);
+      pieces.push(p);
+      groups.push(new Set([idx]));  // solo group
+      traySet.add(idx);
+    }
+  }
+  buildTrayDOM();
+  updateStats();
+}
+
+// ══════════════════════════════════════════
+//  GROUP MANAGEMENT
+//  Key invariant: pieces[idx].gid === the index of its group in `groups[]`
+//  We maintain this by rebuilding gids after any structural change.
+// ══════════════════════════════════════════
+function rebuildGids(){
+  groups.forEach((g,gi)=>g.forEach(idx=>pieces[idx].gid=gi));
+}
+
+// Move group at index `gi` to the end of the render stack (top)
+function bringToFront(gi){
+  const g=groups.splice(gi,1)[0];
+  groups.push(g);
+  rebuildGids();
+}
+
+// Absorb the group at index `srcGi` into the group at index `dstGi`.
+// Returns the new index of the surviving group.
+function absorbGroup(dstGi, srcGi){
+  if(dstGi===srcGi) return dstGi;
+  // Merge src into dst
+  groups[srcGi].forEach(idx=>groups[dstGi].add(idx));
+  groups.splice(srcGi,1);
+  // After splice, indices shift
+  const newDstGi = dstGi>srcGi ? dstGi-1 : dstGi;
+  rebuildGids();
+  return newDstGi;
+}
+
+// ══════════════════════════════════════════
+//  DRAW
+// ══════════════════════════════════════════
+function draw(){
+  if(!ctx) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // subtle warm paper background
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  groups.forEach((g,gi)=>{
+    const isDrag=drag&&gi===drag.gid;
+    ctx.save();
+    if(isDrag){ctx.shadowColor='rgba(0,0,0,.18)';ctx.shadowBlur=12;ctx.shadowOffsetY=4;}
+    g.forEach(idx=>{
+      if(traySet.has(idx)) return;
+      const p=pieces[idx];
+      const cw=PW+M*2, ch=PH+M*2;
+      ctx.drawImage(p.front, 0, 0, cw, ch, p.x-M, p.y-M, cw, ch);
+      if(flipped) ctx.drawImage(p.back, 0, 0, cw, ch, p.x-M, p.y-M, cw, ch);
+    });
+    ctx.restore();
+  });
+}
+
+// ══════════════════════════════════════════
+//  TRAY
+// ══════════════════════════════════════════
+function buildTrayDOM(){
+  const scroll=document.getElementById('tray-scroll');
+  scroll.innerHTML='';
+  const trayInner=(scroll.clientWidth||120)-10;
+  const cellW=Math.floor((trayInner-5)/2);
+  const cellH=Math.round(cellW*(PH+M*2)/(PW+M*2));
+  // Shuffle order
+  const idxArr=[...traySet];
+  for(let i=idxArr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [idxArr[i],idxArr[j]]=[idxArr[j],idxArr[i]];
+  }
+  idxArr.forEach(idx=>{
+    const p=pieces[idx];
+    const tn=document.createElement('canvas');
+    // Native res = full offscreen canvas (sharp)
+    tn.width=p.front.width; tn.height=p.front.height;
+    const tc=tn.getContext('2d'); tc.drawImage(p.front,0,0);
+    tn.className='tp'; tn.dataset.idx=String(idx);
+    tn.style.width=cellW+'px'; tn.style.height=cellH+'px';
+    tn.addEventListener('mousedown',e=>trayPickup(e,idx));
+    tn.addEventListener('touchstart',e=>{
+      e.preventDefault();
+      const t=e.touches[0];
+      trayPickup({clientX:t.clientX,clientY:t.clientY,preventDefault:()=>{}},idx);
+    },{passive:false});
+    scroll.appendChild(tn);
+  });
+  document.getElementById('tray-cnt').textContent=`${traySet.size} remaining`;
+}
+
+// ══════════════════════════════════════════
+//  TRAY PICKUP
+// ══════════════════════════════════════════
+function trayPickup(e,idx){
+  e.preventDefault();
+  traySet.delete(idx);
+
+  const p=pieces[idx];
+  const cr=canvas.getBoundingClientRect();
+  // Place piece centred under the cursor on the canvas coordinate space
+  const mx=(e.clientX-cr.left);
+  const my=(e.clientY-cr.top);
+  // Clamp so piece starts visible on canvas
+  p.x=Math.max(0, Math.min(mx-PW/2, cr.width-PW));
+  p.y=Math.max(0, Math.min(my-PH/2, cr.height-PH));
+
+  bringToFront(p.gid);
+  const gid=p.gid;
+  const origins=new Map([[idx,{x:p.x,y:p.y}]]);
+
+  drag={gid,startMx:mx,startMy:my,origins};
+  canvas.style.cursor='grabbing';
+  bindDrag();
+  buildTrayDOM();
+  updateStats();
+  draw();
+}
+
+// ══════════════════════════════════════════
+//  CANVAS MOUSEDOWN
+// ══════════════════════════════════════════
+function canvasDown(e){
+  e.preventDefault();
+  const {mx,my}=getMP(e);
+  // Hit test top→bottom (last group = topmost)
+  for(let gi=groups.length-1; gi>=0; gi--){
+    for(const idx of groups[gi]){
+      if(traySet.has(idx)) continue;
+      const p=pieces[idx];
+      if(mx>=p.x-M && mx<=p.x+PW+M && my>=p.y-M && my<=p.y+PH+M){
+        bringToFront(gi);
+        const gid=pieces[idx].gid; // refreshed
+        const origins=new Map();
+        groups[gid].forEach(i=>origins.set(i,{x:pieces[i].x,y:pieces[i].y}));
+        drag={gid,startMx:mx,startMy:my,origins};
+        canvas.style.cursor='grabbing';
+        bindDrag();
+        draw();
+        return;
+      }
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+//  DRAG MOVE
+// ══════════════════════════════════════════
+function onMove(e){
+  if(!drag) return;
+  e.preventDefault();
+  const {mx,my}=getMP(e);
+  const ddx=mx-drag.startMx, ddy=my-drag.startMy;
+  drag.origins.forEach(({x,y},idx)=>{
+    pieces[idx].x=x+ddx;
+    pieces[idx].y=y+ddy;
+  });
+  draw();
+}
+
+// ══════════════════════════════════════════
+//  DRAG END → SNAP
+// ══════════════════════════════════════════
+function onUp(e){
+  if(!drag) return;
+  unbindDrag();
+  canvas.style.cursor='default';
+  const gid=drag.gid;
+  drag=null;
+  trySnap(gid);
+  updateStats();
+  draw();
+}
+
+// ══════════════════════════════════════════
+//  SNAP
+//  For each piece in the dragged group, check its 4 grid-neighbours.
+//  If a neighbour (in a different group, on canvas) is close enough
+//  to its expected relative position, shift our group to align perfectly
+//  and merge the two groups.
+// ══════════════════════════════════════════
+// ══════════════════════════════════════════
+//  SNAP
+//  p.x/p.y = top-left of the BASE rect (no margin).
+//  For two pieces to be properly adjacent:
+//    right neighbour:  nb.x = p.x + PW,  nb.y = p.y
+//    left  neighbour:  nb.x = p.x - PW,  nb.y = p.y
+//    below neighbour:  nb.y = p.y + PH,  nb.x = p.x
+//    above neighbour:  nb.y = p.y - PH,  nb.x = p.x
+// ══════════════════════════════════════════
+function trySnap(gid){
+  const members=[...groups[gid]];
+  for(const idx of members){
+    const p=pieces[idx];
+    const curGid=p.gid;
+    // Check all 4 neighbours
+    const dirs=[
+      {dr:0, dc:1},   // right
+      {dr:0, dc:-1},  // left
+      {dr:1, dc:0},   // below
+      {dr:-1,dc:0},   // above
+    ];
+    for(const {dr,dc} of dirs){
+      const nr=p.row+dr, nc=p.col+dc;
+      if(nr<0||nr>=ROWS||nc<0||nc>=COLS) continue;
+      const nb=pieces[nr*COLS+nc];
+      if(traySet.has(nb.idx)) continue;
+      if(nb.gid===curGid) continue;
+
+      // Where p.x/p.y SHOULD be to sit perfectly adjacent to nb
+      const targetX = nb.x - dc*PW;
+      const targetY = nb.y - dr*PH;
+      const dist = Math.hypot(p.x - targetX, p.y - targetY);
+
+      if(dist < SNAP){
+        // Shift every piece in dragged group by the correction
+        const dx = targetX - p.x;
+        const dy = targetY - p.y;
+        const curMembers=[...groups[curGid]];
+        curMembers.forEach(i=>{ pieces[i].x+=dx; pieces[i].y+=dy; });
+        // Merge groups
+        const newGid=absorbGroup(curGid, nb.gid);
+        return trySnap(newGid); // chain snaps
+      }
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+//  FLIP
+// ══════════════════════════════════════════
+function toggleFlip(){
+  flipped=!flipped;
+  const btn=document.getElementById('flip-btn');
+  btn.textContent=flipped?'✦ Unflip':'✦ Flip All';
+  btn.classList.toggle('flipped',flipped);
+  draw();
+}
+
+// ══════════════════════════════════════════
+//  STATS
+// ══════════════════════════════════════════
+function updateStats(){
+  const placed=TOTAL-traySet.size;
+  const cp=document.getElementById('canvas-placed');
+  if(cp) cp.textContent=placed+'/'+TOTAL;
+  const pp=document.getElementById('tb-pts');
+  if(pp) pp.textContent=points;
+}
+
+// ══════════════════════════════════════════
+//  EVENT HELPERS
+// ══════════════════════════════════════════
+function getMP(e){
+  const r=canvas.getBoundingClientRect();
+  const src=e.touches?e.touches[0]:e;
+  return{mx:src.clientX-r.left,my:src.clientY-r.top};
+}
+function bindDrag(){
+  window.addEventListener('mousemove',onMove);
+  window.addEventListener('mouseup',onUp);
+  window.addEventListener('touchmove',onMoveT,{passive:false});
+  window.addEventListener('touchend',onUpT,{passive:false});
+}
+function unbindDrag(){
+  window.removeEventListener('mousemove',onMove);
+  window.removeEventListener('mouseup',onUp);
+  window.removeEventListener('touchmove',onMoveT);
+  window.removeEventListener('touchend',onUpT);
+}
+function onMoveT(e){e.preventDefault();if(e.touches[0])onMove({touches:e.touches,preventDefault:()=>{}});}
+function onUpT(e){e.preventDefault();onUp(e);}
+
+// ══════════════════════════════════════════
+//  PREVIOUS CLUES
+// ══════════════════════════════════════════
+// Add clues here in order — each is a string shown after the previous puzzle was solved
+const PREV_CLUES = [
+  // Example: 'The first clue led you here. The painting is the key.'
+  // Add past clues as the puzzle chain grows
+];
+function loadPrevClues(){
+  if(!PREV_CLUES.length) return;
+  const box=document.getElementById('prev-clues');
+  const list=document.getElementById('prev-clues-list');
+  PREV_CLUES.forEach((c,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText='display:flex;gap:.5rem;align-items:flex-start;';
+    d.innerHTML=`<span style="font-size:.6rem;font-weight:600;color:var(--orange);font-style:normal;margin-top:.1rem;">${i+1}.</span><span>${c}</span>`;
+    list.appendChild(d);
+  });
+  box.style.display='block';
+}
+
+// ══════════════════════════════════════════
+//  ROUND MANAGEMENT
+// ══════════════════════════════════════════
+function startRound(n){
+  currentRound=n;
+  attempts=0;
+  hintsUsed=[];
+  solved=false;
+  flipped=false;
+  const r=ROUNDS[n];
+  // Reset attempt dots
+  const dotsWrap=document.getElementById('adots');
+  dotsWrap.innerHTML='';
+  for(let i=0;i<r.maxAttempts;i++){
+    const d=document.createElement('div'); d.className='adot'; dotsWrap.appendChild(d);
+  }
+  // Update explanation
+  document.querySelector('.code-explain').innerHTML=
+    r.explain+' You have <strong>'+r.maxAttempts+' attempts</strong>.';
+  // Reset input
+  const inp=document.getElementById('code-input');
+  inp.value=''; inp.disabled=false; inp.className='';
+  inp.placeholder='enter code…';
+  document.querySelector('.btn-unlock').disabled=false;
+  document.getElementById('code-reveal').style.display='none';
+  setFB('','');
+  // Nav stays BRMID always
+  const mid=document.querySelector('.nav-mid');
+  if(mid) mid.textContent='BRMID';
+  // Reset flip button
+  const fb=document.getElementById('flip-btn');
+  if(fb){fb.textContent='✦ Flip All';fb.classList.remove('flipped');}
+  // Reinit pieces for new round
+  initPieces(); draw();
+}
+
+function toggleSolvedDrawer(){
+  const d=document.getElementById('solved-drawer');
+  const isOpen=d.classList.contains('open');
+  if(isOpen){ d.classList.remove('open'); return; }
+  // Show most recent solved round by default
+  showDrawerTab(solvedRounds.length-1);
+  d.classList.add('open');
+}
+
+function showDrawerTab(idx){
+  const sr=solvedRounds[idx];
+  if(!sr) return;
+
+  // Build tabs
+  const tabsEl=document.getElementById('drawer-tabs');
+  tabsEl.innerHTML='';
+  solvedRounds.forEach((s,i)=>{
+    const btn=document.createElement('button');
+    btn.className='btn-cls';
+    btn.style.cssText=`padding:.2rem .65rem;font-size:.62rem;font-weight:600;flex:none;${i===idx?'background:var(--ink);color:#fff;border-color:var(--ink);':''}`;
+    btn.textContent='Round '+s.roundNum+' ✓';
+    btn.onclick=()=>showDrawerTab(i);
+    tabsEl.appendChild(btn);
+  });
+
+  // Populate content
+  document.getElementById('drawer-code').textContent=sr.answer;
+  document.getElementById('drawer-clue').textContent=sr.clue;
+
+  // Draw snapshot
+  const preview=document.getElementById('cipher-preview');
+  const snap=sr.snapshot;
+  if(snap){
+    preview.width=snap.width; preview.height=snap.height;
+    preview.getContext('2d').drawImage(snap,0,0);
+    document.getElementById('drawer-puzzle-wrap').style.display='';
+  } else {
+    document.getElementById('drawer-puzzle-wrap').style.display='none';
+  }
+
+  document.getElementById('solved-drawer-title').textContent='Round '+sr.roundNum+' — Solved';
+}
+
+function nextRound(){
+  const n=currentRound+1;
+  const prevRound=ROUNDS[currentRound];
+  const prevRoundNum=currentRound+1;
+
+  // Snapshot the canvas if it's a jigsaw round (round 1)
+  let snapshot=null;
+  const srcCanvas=document.getElementById('jc');
+  if(srcCanvas && srcCanvas.width>0){
+    snapshot=document.createElement('canvas');
+    snapshot.width=srcCanvas.width; snapshot.height=srcCanvas.height;
+    snapshot.getContext('2d').drawImage(srcCanvas,0,0);
+  }
+
+  // Record this solved round
+  solvedRounds.push({
+    roundNum: prevRoundNum,
+    answer: prevRound.answer,
+    clue: prevRound.clue || prevRound.explain || '—',
+    snapshot,
+  });
+
+  // Update pills row — one pill per solved round
+  const pillBtn=document.getElementById('solved-pill-btn');
+  if(solvedRounds.length===1){
+    pillBtn.textContent='Round 1 ✓';
+    pillBtn.style.display='';
+  } else {
+    pillBtn.textContent=solvedRounds.length+' rounds solved ✓';
+  }
+
+  if(n>=ROUNDS.length){
+    stopTimer();
+    setTimeout(()=>{
+      document.getElementById('m-time').textContent=fmt(elapsed);
+      document.getElementById('m-pts').textContent=points;
+      document.getElementById('rating-modal').classList.add('open');
+    },400);
+    return;
+  }
+
+  const r=ROUNDS[n];
+
+  // Round 3 (index 2) = silk road map screen
+  if(n===2){
+    setTimeout(()=>{
+      document.getElementById('map-clue-eyebrow').textContent='Round 3';
+      document.getElementById('map-clue-text').textContent=r.clue;
+      const pill=document.getElementById('solved-pill-btn');
+      pill.textContent=solvedRounds.length+' rounds solved ✓';
+      pill.style.display='';
+      const mpill=document.getElementById('map-solved-pill');
+      mpill.textContent=solvedRounds.length+' rounds solved ✓';
+      mpill.style.display='';
+      currentRound=n; attempts=0; hintsUsed=[]; solved=false;
+      document.getElementById('nav-hint-btn').style.display='';
+      showScreen('screen-map');
+      initSilkMap(); // async, runs independently
+    },300);
+    return;
+  }
+
+  if(n===3){
+    setTimeout(()=>{
+      // Populate orrery screen
+      document.getElementById('orrery-eyebrow').textContent='Round 4';
+      const oc=document.getElementById('orrery-clue');oc.innerHTML=r.clue.split('\n').map(p=>p?'<p style="margin-bottom:.7rem">'+p+'</p>':'').join('');
+      document.getElementById('orrery-reveal').style.display='none';
+      document.getElementById('orrery-fb').textContent='';
+      document.getElementById('orrery-fb').className='cb-fb';
+
+      // Attempt dots
+      const da=document.getElementById('orrery-adots');
+      da.innerHTML='';
+      for(let i=0;i<r.maxAttempts;i++){
+        const d=document.createElement('div'); d.className='adot'; da.appendChild(d);
+      }
+
+      // Reset input
+      const oi=document.getElementById('orrery-input');
+      oi.value=''; oi.disabled=false; oi.className='';
+      document.querySelector('#screen-orrery .btn-unlock').disabled=false;
+
+      // Update solved pill
+      const opill=document.getElementById('orrery-solved-pill');
+      opill.textContent=solvedRounds.length+' rounds solved ✓';
+      opill.style.display='';
+
+      currentRound=n; attempts=0; hintsUsed=[]; solved=false;
+      document.getElementById('nav-hint-btn').style.display='';
+      showScreen('screen-orrery');
+      initOrrery();
+    },300);
+    return;
+  }
+
+  // Cipher screen for any other future rounds
+  setTimeout(()=>{
+    document.getElementById('cipher-eyebrow').textContent='Round '+(n+1);
+    document.getElementById('cipher-clue').textContent=r.clue;
+    document.getElementById('cipher-reveal').style.display='none';
+    document.getElementById('cipher-fb').textContent='';
+    document.getElementById('cipher-fb').className='cb-fb';
+
+    const da=document.getElementById('cipher-adots');
+    da.innerHTML='';
+    for(let i=0;i<r.maxAttempts;i++){
+      const d=document.createElement('div'); d.className='adot'; da.appendChild(d);
+    }
+
+    const ci=document.getElementById('cipher-input');
+    ci.value=''; ci.disabled=false; ci.className='';
+    document.querySelector('#screen-cipher .btn-unlock').disabled=false;
+
+    const cn=document.getElementById('cipher-notes');
+    const sv=localStorage.getItem('notes:'+PID+':cipher'); if(sv) cn.value=sv;
+    cn.addEventListener('input',()=>localStorage.setItem('notes:'+PID+':cipher',cn.value));
+    ci.addEventListener('keydown',e=>{if(e.key==='Enter')checkCipherCode();});
+
+    currentRound=n; attempts=0; hintsUsed=[]; solved=false;
+    showScreen('screen-cipher');
+  }, 300);
+}
+
+// ══════════════════════════════════════════
+//  CIPHER CODE CHECK
+// ══════════════════════════════════════════
+function checkCipherCode(){
+  const r=ROUNDS[currentRound];
+  if(solved||attempts>=r.maxAttempts) return;
+  const inp=document.getElementById('cipher-input');
+  const fb=document.getElementById('cipher-fb');
+  const val=inp.value.trim();
+  if(!val){fb.textContent='Type something first.';fb.className='cb-fb hint';return;}
+  const dots=document.querySelectorAll('#cipher-adots .adot');
+  attempts++;
+  const match=r.caseInsensitive ? val.toLowerCase()===r.answer.toLowerCase() : val===r.answer;
+  if(match){
+    solved=true;
+    inp.classList.add('ok'); inp.disabled=true;
+    document.querySelector('#screen-cipher .btn-unlock').disabled=true;
+    fb.textContent='✦ Correct!'; fb.className='cb-fb ok2';
+    const rev=document.getElementById('cipher-reveal');
+    rev.textContent=r.reveal; rev.style.display='block';
+    setTimeout(()=>nextRound(), 1200);
+  } else {
+    if(dots[attempts-1]) dots[attempts-1].classList.add('wrong');
+    inp.classList.add('err'); setTimeout(()=>inp.classList.remove('err'),400);
+    inp.value='';
+    const left=r.maxAttempts-attempts;
+    if(left===0){
+      fb.textContent='No attempts left.'; fb.className='cb-fb err';
+      inp.disabled=true; document.querySelector('#screen-cipher .btn-unlock').disabled=true;
+    } else {
+      fb.textContent=`Not quite — ${left} attempt${left>1?'s':''} left.`; fb.className='cb-fb err';
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+//  CODE
+// ══════════════════════════════════════════
+function checkCode(){
+  const r=ROUNDS[currentRound];
+  if(solved||attempts>=r.maxAttempts) return;
+  const inp=document.getElementById('code-input');
+  const val=inp.value.trim();
+  if(!val){setFB('Type something first.','hint');return;}
+  const dots=document.querySelectorAll('#adots .adot');
+  attempts++;
+  if(r.caseInsensitive ? val.toLowerCase()===r.answer.toLowerCase() : val===r.answer){
+    solved=true;
+    // Only stop timer on final round
+    if(currentRound===ROUNDS.length-1) stopTimer();
+    inp.classList.add('ok'); inp.disabled=true;
+    document.querySelector('.btn-unlock').disabled=true;
+    setFB('✦ Correct!','ok2');
+    document.getElementById('code-reveal').textContent=r.reveal;
+    nextRound();
+  } else {
+    if(dots[attempts-1]) dots[attempts-1].classList.add('wrong');
+    inp.classList.add('err'); setTimeout(()=>inp.classList.remove('err'),400);
+    inp.value='';
+    const left=r.maxAttempts-attempts;
+    if(left===0){
+      setFB('No attempts left.','err');
+      inp.disabled=true; document.querySelector('.btn-unlock').disabled=true;
+    } else {
+      setFB(`Not quite — ${left} attempt${left>1?'s':''} left.`,'err');
+    }
+  }
+}
+function setFB(m,t){const e=document.getElementById('cbfb');e.textContent=m;e.className='cb-fb '+t;}
+
+// ══════════════════════════════════════════
+//  HINTS
+// ══════════════════════════════════════════
+function openHints(){
+  const r=ROUNDS[currentRound];
+  const list=document.getElementById('hlist'); list.innerHTML='';
+  r.hints.forEach((h,i)=>{
+    const used=hintsUsed.includes(i);
+    const d=document.createElement('div');
+    d.className='hi'+(used?' used':'');
+    d.innerHTML=`<span style="flex:1">${used?h.text:`Hint ${i+1} — costs ${h.cost} pts`}</span>
+      <span class="hcost">−${h.cost}pts</span>
+      ${used?'':`<button class="btn-use" onclick="useHint(${i})">Use</button>`}`;
+    list.appendChild(d);
+  });
+  document.getElementById('hint-modal').classList.add('open');
+}
+function useHint(i){
+  const r=ROUNDS[currentRound];
+  if(hintsUsed.includes(i)) return;
+  hintsUsed.push(i); points=Math.max(0,points-r.hints[i].cost);
+  const pp=document.getElementById('tb-pts'); if(pp) pp.textContent=points;
+  openHints();
+}
+function closeHints(){document.getElementById('hint-modal').classList.remove('open');}
+
+// ══════════════════════════════════════════
+//  RATING
+// ══════════════════════════════════════════
+function lsGet(k,d){try{return JSON.parse(localStorage.getItem(k))||d;}catch{return d;}}
+function loadIntroStats(){
+  const r=lsGet('cr:'+PID,{total:0,count:0}), avg=r.count?r.total/r.count:0;
+  const el=document.getElementById('intro-stars'); el.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span');
+    s.style.cssText=`color:${avg>=i?'var(--orange)':'var(--line-dark)'};font-size:.82rem;`;
+    s.textContent='★'; el.appendChild(s);
+  }
+  const t=lsGet('ct:'+PID,{total:0,count:0});
+  document.getElementById('intro-avg').textContent=t.count?fmt(Math.round(t.total/t.count)):'—';
+  const d=lsGet('cd:'+PID,{}), top=Object.entries(d).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('intro-diff').textContent=top?top[0]:'—';
+}
+document.querySelectorAll('.spick').forEach(s=>{
+  s.addEventListener('click',()=>{userRating=+s.dataset.v;document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<userRating));});
+  s.addEventListener('mouseover',()=>{const v=+s.dataset.v;document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<v));});
+  s.addEventListener('mouseout',()=>{document.querySelectorAll('.spick').forEach((sp,j)=>sp.classList.toggle('lit',j<userRating));});
+});
+function setDiff(d,btn){userDiff=d;document.querySelectorAll('.dbtn').forEach(b=>b.classList.remove('act'));btn.classList.add('act');}
+function submitReview(){
+  if(userRating>0){
+    const r=lsGet('cr:'+PID,{total:0,count:0}), prev=localStorage.getItem('uv:'+PID);
+    if(prev){r.total=r.total-+prev+userRating;}else{r.total+=userRating;r.count++;}
+    localStorage.setItem('cr:'+PID,JSON.stringify(r));
+    localStorage.setItem('uv:'+PID,String(userRating));
+  }
+  const t=lsGet('ct:'+PID,{total:0,count:0}); t.total+=elapsed; t.count++;
+  localStorage.setItem('ct:'+PID,JSON.stringify(t));
+  if(userDiff){const d=lsGet('cd:'+PID,{});d[userDiff]=(d[userDiff]||0)+1;localStorage.setItem('cd:'+PID,JSON.stringify(d));}
+  document.getElementById('rating-modal').classList.remove('open');
+}
+
+// ══════════════════════════════════════════
+//  CANVAS SIZING
+// ══════════════════════════════════════════
+function sizeCanvas(){
+  const dpr=window.devicePixelRatio||1;
+  const w=wrap.clientWidth, h=wrap.clientHeight;
+  canvas.width=Math.round(w*dpr);
+  canvas.height=Math.round(h*dpr);
+  canvas.style.width=w+'px';
+  canvas.style.height=h+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+// ══════════════════════════════════════════
+//  START
+// ══════════════════════════════════════════
+function startPuzzle(){
+  showScreen('screen-puzzle');
+  canvas=document.getElementById('jc');
+  wrap=document.getElementById('canvas-wrap');
+  ctx=canvas.getContext('2d');
+  sizeCanvas();
+  window.addEventListener('resize',()=>{sizeCanvas();draw();});
+
+  canvas.addEventListener('mousedown',canvasDown);
+  canvas.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    const t=e.touches[0];
+    canvasDown({clientX:t.clientX,clientY:t.clientY,preventDefault:()=>{}});
+  },{passive:false});
+
+  // Show nav stats + hint
+  document.getElementById('nav-pts').style.display='';
+  document.getElementById('nav-hint-btn').style.display='';
+
+  // Leave prompt — intercept nav-back link
+  document.getElementById('nav-back-link').addEventListener('click',e=>{
+    if(solved) return;
+    e.preventDefault();
+    if(confirm('Are you sure you want to leave? Your progress will be lost.'))
+      window.location.href=e.currentTarget.href;
+  });
+  window.addEventListener('beforeunload',e=>{
+    if(solved) return;
+    e.preventDefault();
+    e.returnValue='';
+  });
+
+  // Load previous clues if any
+  loadPrevClues();
+
+  // Notes persistence
+  const na=document.getElementById('notes-area');
+  const sv=localStorage.getItem('notes:'+PID); if(sv) na.value=sv;
+  na.addEventListener('input',()=>localStorage.setItem('notes:'+PID,na.value));
+
+  // Code enter key
+  document.getElementById('code-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkCode();});
+
+  // Load both images then kick off round 0
+  let loaded=0;
+  const done=()=>{if(++loaded<2)return; startRound(0); startTimer();};
+  sImg=new Image(); sImg.crossOrigin='anonymous'; sImg.onload=done; sImg.onerror=done; sImg.src=STARRY;
+  cImg=new Image(); cImg.onload=done; cImg.onerror=done; cImg.src=CRYPTIC;
+}
+
+loadIntroStats();
+
+// DEV: ?test=map — jump straight to map screen without playing rounds
+if(new URLSearchParams(location.search).get('test')==='map'){
+  document.getElementById('nav-pts').style.display='';
+  document.getElementById('nav-hint-btn').style.display='';
+  startTimer();
+  currentRound=2;
+  document.getElementById('map-clue-eyebrow').textContent='Round 3';
+  document.getElementById('map-clue-text').textContent=ROUNDS[2].clue;
+  showScreen('screen-map');
+  initSilkMap();
+}
+if(new URLSearchParams(location.search).get('test')==='orrery'){
+  document.getElementById('nav-pts').style.display='';
+  document.getElementById('nav-hint-btn').style.display='';
+  startTimer();
+  currentRound=3;
+  document.getElementById('orrery-eyebrow').textContent='Round 4';
+  const oc2=document.getElementById('orrery-clue');oc2.innerHTML=ROUNDS[3].clue.split('\n').map(p=>p?'<p style="margin-bottom:.7rem">'+p+'</p>':'').join('');
+  const da=document.getElementById('orrery-adots');
+  da.innerHTML='';
+  for(let i=0;i<10;i++){const d=document.createElement('div');d.className='adot';da.appendChild(d);}
+  showScreen('screen-orrery');
+  initOrrery();
+}
+</script>
+</body>
+</html>
