@@ -239,6 +239,7 @@ textarea.notes::placeholder{color:var(--line-dark);}
       <div class="imi"><span class="iml">Rating</span><div class="srow" id="intro-stars"></div></div>
       <div class="imi"><span class="iml">Difficulty</span><span class="imv" id="intro-diff">—</span></div>
       <div class="imi"><span class="iml">Avg Time</span><span class="imv" id="intro-avg">—</span></div>
+      <div class="imi"><span class="iml">Avg Points</span><span class="imv" id="intro-pts">—</span></div>
     </div>
     <div class="irules">
       <strong>How to play —</strong> Each round is different. Solve what's in front of you. The answer to each round unlocks the next. Use hints if you're stuck — they cost points. Your timer runs across all four rounds.
@@ -1896,7 +1897,7 @@ function closeHints(){document.getElementById('hint-modal').classList.remove('op
 //  RATING
 // ══════════════════════════════════════════
 function lsGet(k,d){try{return JSON.parse(localStorage.getItem(k))||d;}catch{return d;}}
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzrfjAfHAG1TzqnXNfRvuoKrZ5PcRyMtPRR7EE2nKeuSsVa26LYw05JefeUWTLShDhXHA/exec';
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwL9pQ_X6PJVvrdWIuNY6AIzsy63Dd7eSNVtEa8usKycHSH1CGXzhtND5cz3gxpt5YCLQ/exec';
 
 function loadIntroStats(){
   // Show local fallback immediately, then update from sheet
@@ -1930,6 +1931,7 @@ function loadIntroStats(){
       if(data.avg_time) document.getElementById('intro-avg').textContent=fmt(data.avg_time);
       // Top difficulty
       if(data.top_diff) document.getElementById('intro-diff').textContent=data.top_diff;
+      if(data.avg_points) document.getElementById('intro-pts').textContent=data.avg_points;
     })
     .catch(()=>{}); // silently fail — local fallback already shown
 }
@@ -1952,7 +1954,8 @@ function submitReview(){
     body: JSON.stringify({
       time_seconds: elapsed,
       rating:       userRating || 0,
-      difficulty:   userDiff   || ''
+      difficulty:   userDiff   || '',
+      points:       points
     })
   }).catch(()=>{}); // fire and forget
 
