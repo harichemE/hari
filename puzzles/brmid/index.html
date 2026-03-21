@@ -2061,7 +2061,8 @@ function submitReview(){
   }).catch(()=>{}); // fire and forget
 
   document.getElementById('rating-modal').classList.remove('open');
-  setTimeout(() => showScreen('screen-explain'), 300);
+  stopOrrery();
+  setTimeout(() => showScreen('screen-explain'), 350);
 }
 
 document.querySelectorAll('.spick').forEach(s=>{
@@ -2162,6 +2163,9 @@ if(new URLSearchParams(location.search).get('test')==='orrery'){
   for(let i=0;i<10;i++){const d=document.createElement('div');d.className='adot';da.appendChild(d);}
   showScreen('screen-orrery');
   initOrrery();
+}
+if(new URLSearchParams(location.search).get('test')==='explain'){
+  showScreen('screen-explain');
 }
 </script>
 </body>
