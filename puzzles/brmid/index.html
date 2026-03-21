@@ -176,6 +176,7 @@ textarea.notes::placeholder{color:var(--line-dark);}
 .orrery-num{margin-left:auto;font-family:'Playfair Display',serif;font-weight:600;color:var(--ink);font-size:.8rem;letter-spacing:.05em;}
 .orrery-notes-card{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;flex:1;min-height:80px;}
 @media(max-width:700px){.orrery-wrap{flex-direction:column;} .orrery-right{width:100%;}}
+#screen-explain.active{display:block;}
 /* EXPLANATION SCREEN */
 .ex-round{margin-bottom:.5rem;}
 .ex-num{font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.35rem;}
@@ -490,7 +491,7 @@ textarea.notes::placeholder{color:var(--line-dark);}
 </div>
 
 <!-- EXPLANATION SCREEN -->
-<div id="screen-explain" class="screen" style="background:var(--bg);overflow-y:auto;">
+<div id="screen-explain" class="screen" style="background:var(--bg);display:none;overflow-y:auto;flex-direction:column;">
   <div style="max-width:680px;margin:0 auto;padding:3rem 2rem 5rem;">
 
     <p style="font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.6rem;">BRMID — The Full Story</p>
