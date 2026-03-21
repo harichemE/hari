@@ -176,6 +176,25 @@ textarea.notes::placeholder{color:var(--line-dark);}
 .orrery-num{margin-left:auto;font-family:'Playfair Display',serif;font-weight:600;color:var(--ink);font-size:.8rem;letter-spacing:.05em;}
 .orrery-notes-card{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.75rem;display:flex;flex-direction:column;gap:.5rem;flex:1;min-height:80px;}
 @media(max-width:700px){.orrery-wrap{flex-direction:column;} .orrery-right{width:100%;}}
+/* EXPLANATION SCREEN */
+.ex-round{margin-bottom:.5rem;}
+.ex-num{font-size:.62rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.35rem;}
+.ex-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:600;color:var(--ink);margin-bottom:.4rem;letter-spacing:-.01em;}
+.ex-answer{font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:.9rem;}
+.ex-answer span{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--orange);font-weight:700;letter-spacing:.05em;text-transform:none;}
+.ex-body{font-size:.9rem;font-weight:300;color:var(--ink-mid);line-height:1.85;margin-bottom:.85rem;}
+.ex-body strong{font-weight:600;color:var(--ink);}
+.ex-body em{font-style:italic;}
+.ex-cities{display:flex;flex-direction:column;gap:.4rem;margin:.5rem 0;padding:.9rem 1.1rem;background:var(--bg-off);border:1px solid var(--line);border-radius:4px;}
+.ex-city{display:flex;align-items:baseline;gap:.65rem;}
+.ex-city-letter{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--orange);font-style:italic;width:1rem;flex-shrink:0;}
+.ex-city-name{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:600;color:var(--ink);}
+.ex-city-loc{font-size:.72rem;color:var(--ink-muted);margin-left:.2rem;}
+.ex-periods{display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0;padding:.9rem 1.1rem;background:var(--bg-off);border:1px solid var(--line);border-radius:4px;}
+.ex-period{display:flex;align-items:center;justify-content:space-between;}
+.ex-planet{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;}
+.ex-days{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--ink);letter-spacing:.04em;}
+
 #screen-map{flex-direction:row;background:var(--bg-off);}
 .map-screen-wrap{display:flex;flex:1;gap:10px;padding:10px;min-height:0;overflow:hidden;}
 .map-main{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0;overflow-y:auto;}
@@ -470,6 +489,85 @@ textarea.notes::placeholder{color:var(--line-dark);}
   </div>
 </div>
 
+<!-- EXPLANATION SCREEN -->
+<div id="screen-explain" class="screen" style="background:var(--bg);overflow-y:auto;">
+  <div style="max-width:680px;margin:0 auto;padding:3rem 2rem 5rem;">
+
+    <p style="font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:.6rem;">BRMID — The Full Story</p>
+    <h1 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;line-height:1.1;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">Before Reality<br/>Made Its Design</h1>
+    <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;color:var(--ink-muted);margin-bottom:2.5rem;line-height:1.7;">Four rounds. One thread. Here is what it all meant.</p>
+    <div style="height:1px;background:var(--line);margin-bottom:2.5rem;"></div>
+
+    <!-- ROUND 1 -->
+    <div class="ex-round">
+      <div class="ex-num">Round 1</div>
+      <h2 class="ex-title">The Cipher on the Back</h2>
+      <div class="ex-answer">Answer: <span>H₂SO₄</span></div>
+      <p class="ex-body">You assembled Van Gogh's <em>The Starry Night</em> — one of the most recognisable paintings in the world. But the painting was not the puzzle. The puzzle was on the back.</p>
+      <p class="ex-body">Each piece, when flipped, showed a slice of a dark grid covered in Greek letters. Most letters were uppercase: Δ, Ψ, Φ, Θ, Λ, Γ, Σ, Ω, Π, Ξ. But three were lowercase: η (eta), and scattered among them were two symbols that did not belong at all — <strong>@</strong> and <strong>$</strong>.</p>
+      <p class="ex-body">The first hint told you: <em>the kings shout, the servants whisper</em>. Uppercase = Greek letters, irrelevant noise. Lowercase and anomalous characters = the signal. Reading the anomalies left to right, top to bottom: <strong>H</strong> (from the @ symbol's position), <strong>2</strong>, <strong>S</strong>, <strong>O</strong>, <strong>4</strong> — or rather, the grid encodes the chemical formula for sulphuric acid.</p>
+      <p class="ex-body">What does an alchemist dream of? <strong>H₂SO₄</strong> — oil of vitriol. The most important acid in industrial chemistry.</p>
+    </div>
+
+    <div style="height:1px;background:var(--line);margin:2rem 0;"></div>
+
+    <!-- ROUND 2 -->
+    <div class="ex-round">
+      <div class="ex-num">Round 2</div>
+      <h2 class="ex-title">The Brightest Light in the Painting</h2>
+      <div class="ex-answer">Answer: <span>Venus</span></div>
+      <p class="ex-body">The clue told a story in three parts. A father's wound — Uranus, wounded by Cronus, whose blood fell into the sea. From that sea, off the island of Cuprum (modern Cyprus — the origin of both <em>copper</em> and <em>Cupid</em>), Aphrodite was born. Aphrodite is Venus.</p>
+      <p class="ex-body">Then: Van Gogh. On the night he painted the sleeping village, one object in the sky did not sleep. It burned. Astronomers have since confirmed that the largest, brightest object in the upper-left of <em>The Starry Night</em> is not a star — it is <strong>Venus</strong>, rendered as Van Gogh saw it through his window at Saint-Paul-de-Mausole asylum in June 1889.</p>
+      <p class="ex-body">The brightest object in the night sky that is not the Moon. Always close to the sun. Always the first to appear at dusk, the last to fade at dawn. <strong>Venus.</strong></p>
+    </div>
+
+    <div style="height:1px;background:var(--line);margin:2rem 0;"></div>
+
+    <!-- ROUND 3 -->
+    <div class="ex-round">
+      <div class="ex-num">Round 3</div>
+      <h2 class="ex-title">The Word That Crossed the Silk Road</h2>
+      <div class="ex-answer">Answer: <span>Shukra</span></div>
+      <p class="ex-body">The clue described something that travelled the Silk Road without weight, without tax — a name. In Sanskrit, <strong>Shukra</strong> (शुक्र) is the name for the planet Venus. The Vedic astronomers of India independently observed the same bright wandering light and named it after the concept of brightness and purity.</p>
+      <p class="ex-body">The six cities on the map — walked west to east — were chosen so that their first letters spell the answer:</p>
+      <div class="ex-cities">
+        <div class="ex-city"><span class="ex-city-letter">S</span><span class="ex-city-name">Siraf</span><span class="ex-city-loc">Persian Gulf port, Iran</span></div>
+        <div class="ex-city"><span class="ex-city-letter">H</span><span class="ex-city-name">Hormuz</span><span class="ex-city-loc">Strait of Hormuz, Iran</span></div>
+        <div class="ex-city"><span class="ex-city-letter">U</span><span class="ex-city-name">Urgench</span><span class="ex-city-loc">Khwarazm, Uzbekistan</span></div>
+        <div class="ex-city"><span class="ex-city-letter">K</span><span class="ex-city-name">Rawalpindi</span><span class="ex-city-loc">Punjab, Pakistan</span></div>
+        <div class="ex-city"><span class="ex-city-letter">R</span><span class="ex-city-name">Kashgar</span><span class="ex-city-loc">Xinjiang, China</span></div>
+        <div class="ex-city"><span class="ex-city-letter">A</span><span class="ex-city-name">Aksu</span><span class="ex-city-loc">Xinjiang, China — oasis on the northern Silk Road</span></div>
+      </div>
+      <p class="ex-body" style="margin-top:1rem;">Rawalpindi and Kashgar carry K and R respectively — not their own initials, but the letters needed in sequence. The road assigns the letters; the cities carry them.</p>
+    </div>
+
+    <div style="height:1px;background:var(--line);margin:2rem 0;"></div>
+
+    <!-- ROUND 4 -->
+    <div class="ex-round">
+      <div class="ex-num">Round 4</div>
+      <h2 class="ex-title">The Dance of Rivals</h2>
+      <div class="ex-answer">Answer: <span>584399</span></div>
+      <p class="ex-body">In Hindu mythology, <strong>Shukra</strong> is the guru of the Asuras — the demons. His eternal rival is <strong>Brhaspati</strong>, guru of the Devas — the gods. They are opposite forces, each advising their side in the great cosmic conflict, circling the same sky from the same Earth.</p>
+      <p class="ex-body">In astronomy, the <strong>synodic period</strong> of a planet is the number of days it takes to return to the same position in the sky as seen from Earth. This is different from the orbital period (which is measured relative to the stars). The synodic period is what an ancient observer with no telescope would count.</p>
+      <div class="ex-periods">
+        <div class="ex-period"><span class="ex-planet" style="color:#e8c840;">Shukra (Venus)</span><span class="ex-days">584 days</span></div>
+        <div class="ex-period"><span class="ex-planet" style="color:#c8a060;">Brhaspati (Jupiter)</span><span class="ex-days">399 days</span></div>
+      </div>
+      <p class="ex-body" style="margin-top:1rem;">These numbers were known to Babylonian, Indian, Greek, and Chinese astronomers independently — they appear in the Vedic <em>Vedāṅga Jyotiṣa</em>, in Ptolemy's <em>Almagest</em>, and in Han Dynasty astronomical records. Shukra goes first — as the student before the teacher, the bright one before the slow one. <strong>584399.</strong></p>
+      <p class="ex-body">The orrery showed you the geocentric model — the ancient view of the sky with Earth at the centre — as every pre-Copernican astronomer would have seen it. The unlabelled amber planet orbiting slowly beyond Shukra was Brhaspati all along.</p>
+    </div>
+
+    <div style="height:1px;background:var(--line);margin:2rem 0;"></div>
+
+    <div style="text-align:center;padding:1.5rem 0;">
+      <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.1rem;color:var(--ink-mid);margin-bottom:1.5rem;line-height:1.8;">The painting held a planet.<br/>The planet crossed a road.<br/>The road spelled a name.<br/>The name had a rival.<br/>And the rival had a number.</p>
+      <a href="../../puzzles.html" style="font-family:'Instrument Sans',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--orange);text-decoration:none;padding:.8rem 2rem;border-radius:3px;display:inline-block;transition:background .2s;">← Back to Puzzles</a>
+    </div>
+
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -514,18 +612,20 @@ const ROUNDS = [
   {
     answer: 'SHUKRA',
     caseInsensitive: true,
-    clue: 'Seen in the ledger of a spice trader, somewhere between Alexandria and Bharuch, circa 100 AD: Something traveled east that was not silk, not pepper, not gold. It had no weight. It could not be taxed. But the strangest thing — when the traders arrived at the Indus, it was already there. Waiting. Already named. The men of the East had watched the same wandering light and had arrived, alone, at the same truth. The one that never strays far from the sun. The one that burns at dusk and returns at dawn. Six cities lie between the two worlds that named it independently. Walk the road west to east, from the last Roman port to the first Chinese gate. Let the cities speak in order. What they spell is what it was always called, by those who saw it clearly.',
+    clue: 'Seen in the ledger of a spice trader, somewhere between Alexandria and Bharuch, circa 100 AD: Something traveled east that was not silk, not pepper, not gold. It had no weight. It could not be taxed. But the strangest thing — when the traders arrived at the Indus, it was already there. Waiting. Already named. The men of the East had watched the same wandering light and had arrived, alone, at the same truth. The one that never strays far from the sun. The one that burns at dusk and returns at dawn. Six cities lie between the two worlds that named it independently. Walk the road west to east, from the last Roman port to the great oasis of the northern route. Let the cities speak in order. What they spell is what it was always called, by those who saw it clearly.',
     hints: [
       {text:'The road speaks. But only in initials. And only if you walk it in the right direction.', cost:50},
       {text:'The Kushans knew her. So did the Parthians. They called her by different names — but one name outlasted all empires. It was already old when this road was young.', cost:150},
+      {text:'The last city sits at the foot of the Tian Shan mountains in Xinjiang, China — a major oasis stop on the northern Silk Road. Its ancient name means something close to the sound of the river that fed it.', cost:75},
     ],
     reveal:  'You have followed the light across three worlds. Now look up. The sky holds one more secret.',
     maxAttempts: 10,
   },
   {
     answer: '584399',
-    clue: 'He has always had a rival. They have circled the same sky since before the first temple was built. They do not speak to each other — but they have always watched the same sky from the same Earth.\n\nShukra completes his dance. His rival completes his.\n\nThe numbers were known to every astronomer who ever looked up without a telescope. The moves of his, and the moves of his rival\'s — placed side by side.',
+    clue: 'He has always had a rival. They have circled the same sky since before the first temple was built. They do not speak to each other — but they have always watched the same sky from the same Earth.\n\nShukra completes his dance. His rival completes his.\n\nEvery astronomer who ever looked up without a telescope counted the days — how many days before each wandering light returned to the same place in the sky. Those counts were written down long before any modern calendar. Write the days of Shukra\'s return, then the days of his rival\'s — side by side, as one number.',
     hints: [
+      {text:'The concept is called the synodic period — the number of days a planet takes to return to the same position in the sky, as seen from Earth.', cost:25},
       {text:'In the ancient sky, every wandering light had a rhythm — the number of days before it returned to the same position as seen from Earth. Watch the diagram.', cost:50},
       {text:'Shukra dances closer to the sun — his cycle is the longer one. His rival dances farther — his cycle is the shorter one. Shukra goes first.', cost:150},
     ],
@@ -585,7 +685,7 @@ const SILK_CITIES = [
   { answer:'urgench',    letter:'U', dotId:'mdot-2', labelId:'mlabel-2', lat:'41.53°N', lng:'60.62°E', coord:[60.62, 41.53] },
   { answer:'rawalpindi', letter:'K', dotId:'mdot-3', labelId:'mlabel-3', lat:'33.58°N', lng:'73.07°E', coord:[73.07, 33.58] },
   { answer:'kashgar',    letter:'R', dotId:'mdot-4', labelId:'mlabel-4', lat:'39.47°N', lng:'75.99°E', coord:[75.99, 39.47] },
-  { answer:'anxi',       letter:'A', dotId:'mdot-5', labelId:'mlabel-5', lat:'40.52°N', lng:'95.78°E', coord:[95.78, 40.52] },
+  { answer:'aksu',       letter:'A', dotId:'mdot-5', labelId:'mlabel-5', lat:'41.17°N', lng:'80.26°E', coord:[80.26, 41.17] },
 ];
 const citySolved = new Array(SILK_CITIES.length).fill(false);
 let cityActiveIdx = null;
@@ -1960,6 +2060,7 @@ function submitReview(){
   }).catch(()=>{}); // fire and forget
 
   document.getElementById('rating-modal').classList.remove('open');
+  setTimeout(() => showScreen('screen-explain'), 300);
 }
 
 document.querySelectorAll('.spick').forEach(s=>{
